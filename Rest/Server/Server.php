@@ -4,6 +4,7 @@ namespace Rest\Server;
 
 
 use Rest\Request;
+use Rest\Response;
 
 class Server{
 	/**
@@ -39,9 +40,34 @@ class Server{
 		$request = new Request();
 
 		foreach ($this->controllers as $controller) {
-			if ($controller->handleRequest($request)) {
+			if ($ret = $controller->handleRequest($request)) {
+				if ($ret instanceof Response) {
+					$this->answer($ret);	
+				}
+				
 				return;
 			}
 		}
+	}
+	
+	/**
+	 * @access protected
+	 * @param \Rest\Response $response
+	 * @throws \RuntimeException
+	 * @return void
+	 */
+	protected function answer(Response $response){
+		if (headers_sent()) {
+			throw new \RuntimeException("headers already sent");
+		}
+		
+		header("Content-type: " . $response->getContentType());
+		header("Content-length: " . $response->getContentLenght());
+		
+		if ($response->getLocation()) {
+			header("Location: " . $response->getLocation());
+		}
+		
+		echo $response->getData();
 	}
 }

@@ -6,6 +6,7 @@ namespace Rest\Server;
 use Rest\Route;
 use ReflectionClass;
 use Rest\Request;
+use Rest\Response;
 
 abstract class Controller{
 	/**
@@ -37,7 +38,7 @@ abstract class Controller{
 	/**
 	 * @access public
 	 * @param \Rest\Request $request
-	 * @return bool
+	 * @return \Rest\Response|bool
 	 */
 	public function handleRequest(Request $request){
 		$this->collectRoutes();
@@ -45,9 +46,9 @@ abstract class Controller{
 		foreach ($this->routes as $callable => $route) {
 			if ($route->matchRequest($request)) {
 				$args = $this->getPlaceholders($route, $request);
-				call_user_func_array([$this, $callable], $args);
+				$ret = call_user_func_array([$this, $callable], $args);
 				
-				return true;
+				return $ret instanceof Response ? $ret : true;
 			}
 		}
 		
