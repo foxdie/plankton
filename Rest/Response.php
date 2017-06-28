@@ -54,7 +54,7 @@ class Response{
 	public static function toXML(array $data, $rootName = "response"){
 		$xml = new \SimpleXMLElement($rootName);
 		
-		$toXML = function(array $data, \SimpleXMLElement $xml) use (&$xml){
+		$toXML = function(array $data, \SimpleXMLElement $xml) use (&$toXML){
 			foreach ($data as $key => $value) {
 				if (is_array($value)) {
 					$child = $xml->addchild($key);
