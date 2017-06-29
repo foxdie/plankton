@@ -1,0 +1,5 @@
+{
+	"require": {
+		"foxdie/rest": "1.0.*"
+	}
+}
