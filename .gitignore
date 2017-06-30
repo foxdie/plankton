@@ -2,3 +2,5 @@
 .project
 index.php
 .settings
+
+/vendor/
