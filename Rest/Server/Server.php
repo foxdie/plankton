@@ -62,14 +62,11 @@ class Server{
 		}
 		
 		http_response_code($response->getCode());
-		
-		header("Content-type: " . $response->getContentType());
-		header("Content-length: " . $response->getContentLenght());
 
-		foreach ($response->getHeaders() as $key => $value) {
-			header($key . ": " . $value);	
+		foreach ($response->getHeaders() as $name => $value) {
+			header($name . ": " . $value);	
 		}
 		
-		echo $response->getData();
+		echo $response;
 	}
 }

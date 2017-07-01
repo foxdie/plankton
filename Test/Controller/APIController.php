@@ -5,6 +5,7 @@ namespace Test\Controller;
 use Rest\Response;
 use Rest\Server\Controller;
 use Test\Entity\User;
+use Rest\Request;
 
 
 class APIController extends Controller{

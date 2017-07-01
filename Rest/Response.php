@@ -5,7 +5,7 @@ namespace Rest;
 
 class Response{
 	const CONTENT_TYPE_JSON = "application/json";
-	const CONTENT_TYPE_XML = "application/xml";
+	const CONTENT_TYPE_XML 	= "application/xml";
 	
 	/**
 	 * @access protected
@@ -15,21 +15,9 @@ class Response{
 	
 	/**
 	 * @access protected
-	 * @var string
-	 */
-	protected $contentType;
-	
-	/**
-	 * @access protected
 	 * @var int
 	 */
 	protected $code;
-	
-	/**
-	 * @access protected
-	 * @var string
-	 */
-	protected $location;
 	
 	/**
 	 * @access protected
@@ -43,7 +31,7 @@ class Response{
 	 * @param array $data
 	 * @return string
 	 */
-	public static function toJSON(array $data){
+	public static function serializeJSON(array $data){
 		return json_encode($data);
 	}
 	
@@ -54,14 +42,14 @@ class Response{
 	 * @param string $rootName
 	 * @return string
 	 */
-	public static function toXML(array $data, $rootName = "response"){
-		$xml = new \SimpleXMLElement($rootName);
+	public static function serializeXML(array $data, $rootName = "response"){
+		$xml = new \SimpleXMLElement("<{$rootName}/>");
 		
-		$toXML = function(array $data, \SimpleXMLElement $xml) use (&$toXML){
+		$serializeXML = function(array $data, \SimpleXMLElement $xml) use (&$serializeXML){
 			foreach ($data as $key => $value) {
 				if (is_array($value)) {
 					$child = $xml->addchild($key);
-					$toXML($value, $child);
+					$serializeXML($value, $child);
 				}
 				else {
 					$xml->addChild($key, $value);
@@ -69,7 +57,7 @@ class Response{
 			}
 		};
 		
-		$toXML($data, $xml);
+		$serializeXML($data, $xml);
 
 		return $xml->asXML();
 	}
@@ -80,10 +68,10 @@ class Response{
 	 */
 	public function __construct($data = ""){
 		$this->data = $data;
-		$this->headers = [];
-		$this->contentType = self::CONTENT_TYPE_JSON;
-		$this->location = NULL;
 		$this->code = 200;
+		
+		$this->setHeader("Content-length", 	strlen($data));
+		$this->setHeader("Content-type", 	self::CONTENT_TYPE_JSON);
 	}
 	
 	/**
@@ -101,17 +89,19 @@ class Response{
 	 */
 	public function setData($data){
 		if (is_array($data)) {
-			switch ($this->contentType) {
+			switch ($this->headers["Content-type"]) {
 				case self::CONTENT_TYPE_JSON :
-					$data = self::toJSON($data);
+					$this->data = self::serializeJSON($data);
 					break;
 				case self::CONTENT_TYPE_XML :
-					$data = self::toXML($data);
+					$this->data = self::serializeXML($data);
 					break;
+				default :
+					$this->data = $data;
 			}
 		}
 		
-		$this->data = $data;
+		$this->setHeader("Content-length", strlen($this->data));
 		
 		return $this;
 	}
@@ -121,7 +111,7 @@ class Response{
 	 * @return string
 	 */
 	public function getContentType(){
-		return $this->contentType;
+		return $this->getHeader("Content-type");
 	}
 	
 	/**
@@ -130,9 +120,7 @@ class Response{
 	 * @return \Rest\Response
 	 */
 	public function setContentType($contentType){
-		$this->contentType = $contentType;
-		
-		return $this;
+		return $this->setHeader("Content-type", $contentType);
 	}
 	
 	/**
@@ -159,7 +147,7 @@ class Response{
 	 * @return int
 	 */
 	public function getContentLenght(){
-		return strlen($this->data);
+		return $this->getHeader("Content-lenght");
 	}
 	
 	/**
@@ -167,7 +155,7 @@ class Response{
 	 * @return string
 	 */
 	public function getLocation(){
-		return isset($this->headers["Location"]) ? $this->headers["Location"] : NULL;
+		return $this->getHeader("Location");
 	}
 	
 	/**
@@ -176,9 +164,7 @@ class Response{
 	 * @return \Rest\Response
 	 */
 	public function setLocation($location){
-		$this->headers["Location"] = $location;
-		
-		return $this;
+		return $this->setHeader("Location", $location);
 	}
 	
 	/**
@@ -187,6 +173,15 @@ class Response{
 	 */
 	public function getHeaders(){
 		return $this->headers;
+	}
+	
+	/**
+	 * @access public
+	 * @param string $name
+	 * @return string|NULL
+	 */
+	public function getHeader($name){
+		return isset($this->headers[$name]) ? $this->headers[$name] : NULL;
 	}
 	
 	/**
