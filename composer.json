@@ -12,5 +12,10 @@
             "email": "foxdie_cs@hotmail.com"
         }
     ],
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+    	    "foxdie\\Rest\\": "Rest"
+	}
+    }
 }
