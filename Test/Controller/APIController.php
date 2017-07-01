@@ -53,7 +53,7 @@ class APIController extends Controller{
 	/**
 	 * POST example
 	 * @Route(/user)
-	 * @Method(GET)
+	 * @Method(POST)
 	 */
 	public function createUser($id){
 		$response = new Response();
@@ -126,7 +126,7 @@ class APIController extends Controller{
 	public function deleteUser($id){
 		$response = new Response();
 	
-		//delete
+		//delete user
 		//...
 	
 		$response->setCode(204);

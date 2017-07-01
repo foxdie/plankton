@@ -167,7 +167,7 @@ class Response{
 	 * @return string
 	 */
 	public function getLocation(){
-		return $this->location;
+		return isset($this->headers["Location"]) ? $this->headers["Location"] : NULL;
 	}
 	
 	/**
@@ -176,7 +176,27 @@ class Response{
 	 * @return \Rest\Response
 	 */
 	public function setLocation($location){
-		$this->location = $location;
+		$this->headers["Location"] = $location;
+		
+		return $this;
+	}
+	
+	/**
+	 * @access public
+	 * @return string[]
+	 */
+	public function getHeaders(){
+		return $this->headers;
+	}
+	
+	/**
+	 * @access public
+	 * @param string $key
+	 * @param string $value
+	 * @return \Rest\Response
+	 */
+	public function setHeader($key, $value){
+		$this->headers[$key] = $value;
 		
 		return $this;
 	}

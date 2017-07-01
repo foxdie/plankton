@@ -42,7 +42,7 @@ class Server{
 		foreach ($this->controllers as $controller) {
 			if ($ret = $controller->handleRequest($request)) {
 				if ($ret instanceof Response) {
-					$this->answer($ret);	
+					$this->respond($ret);	
 				}
 				
 				return;
@@ -56,16 +56,18 @@ class Server{
 	 * @throws \RuntimeException
 	 * @return void
 	 */
-	protected function answer(Response $response){
+	protected function respond(Response $response){
 		if (headers_sent()) {
 			throw new \RuntimeException("headers already sent");
 		}
 		
+		http_response_code($response->getCode());
+		
 		header("Content-type: " . $response->getContentType());
 		header("Content-length: " . $response->getContentLenght());
-		
-		if ($response->getLocation()) {
-			header("Location: " . $response->getLocation());
+
+		foreach ($response->getHeaders() as $key => $value) {
+			header($key . ": " . $value);	
 		}
 		
 		echo $response->getData();
