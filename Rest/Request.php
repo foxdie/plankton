@@ -29,7 +29,7 @@ final class Request{
 	private $uri;
 	
 	public function __construct(){
-		$this->uri = $_SERVER["PHP_SELF"];
+		$this->uri = isset($_SERVER["PATH_INFO"]) ? $_SERVER["PATH_INFO"] : preg_replace("/^(.+)\?.*\$/", "\$1", $_SERVER["REQUEST_URI"]);
 		$this->method = $_SERVER["REQUEST_METHOD"];
 		$this->parameters = $this->parseQueryString();
 	}

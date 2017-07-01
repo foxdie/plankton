@@ -46,7 +46,7 @@ abstract class Controller{
 		foreach ($this->routes as $callable => $route) {
 			if ($route->matchRequest($request)) {
 				$args = $this->getPlaceholders($route, $request);
-				$ret = call_user_func_array([$this, $callable], $args);
+				$ret = call_user_func_array([$this, $callable], $args ?: []);
 				
 				return $ret instanceof Response ? $ret : true;
 			}

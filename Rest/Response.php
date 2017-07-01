@@ -4,9 +4,6 @@ namespace Rest;
 
 
 class Response{
-	const OUTPUT_JSON = "JSON";
-	const OUTPUT_XML = "XML";
-
 	const CONTENT_TYPE_JSON = "application/json";
 	const CONTENT_TYPE_XML = "application/xml";
 	
@@ -21,6 +18,12 @@ class Response{
 	 * @var string
 	 */
 	protected $contentType;
+	
+	/**
+	 * @access protected
+	 * @var int
+	 */
+	protected $code;
 	
 	/**
 	 * @access protected
@@ -78,8 +81,9 @@ class Response{
 	public function __construct($data = ""){
 		$this->data = $data;
 		$this->headers = [];
-		$this->contentType = self::OUTPUT_JSON;
+		$this->contentType = self::CONTENT_TYPE_JSON;
 		$this->location = NULL;
+		$this->code = 200;
 	}
 	
 	/**
@@ -99,7 +103,7 @@ class Response{
 		if (is_array($data)) {
 			switch ($this->contentType) {
 				case self::CONTENT_TYPE_JSON :
-					$data = selftoJSON($data);
+					$data = self::toJSON($data);
 					break;
 				case self::CONTENT_TYPE_XML :
 					$data = self::toXML($data);
@@ -127,6 +131,25 @@ class Response{
 	 */
 	public function setContentType($contentType){
 		$this->contentType = $contentType;
+		
+		return $this;
+	}
+	
+	/**
+	 * @access public
+	 * @return number
+	 */
+	public function getCode(){
+		return $this->code;
+	}
+	
+	/**
+	 * @access public
+	 * @param int $code
+	 * @return \Rest\Response
+	 */
+	public function setCode($code){
+		$this->code = intval($code) ?: 200;
 		
 		return $this;
 	}
