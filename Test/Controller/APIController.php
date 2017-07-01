@@ -1,5 +1,7 @@
 <?php
 
+namespace Test\Controller;
+
 use Rest\Response;
 use Rest\Server\Controller;
 use Test\Entity\User;
