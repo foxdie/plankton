@@ -92,6 +92,6 @@ final class Route{
 	 * @return string
 	 */
 	public function __toString(){
-		return $this->method . " " . $this->uri;
+		return "+ {$this->method} {$this->uri}";
 	}
 }
