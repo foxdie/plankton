@@ -6,7 +6,7 @@ namespace Rest\Server;
 use Rest\Route;
 use ReflectionClass;
 use Rest\Request;
-use Rest\Response;
+use Rest\Server\Response;
 
 abstract class Controller{
 	/**
@@ -38,7 +38,7 @@ abstract class Controller{
 	/**
 	 * @access public
 	 * @param \Rest\Request $request
-	 * @return \Rest\Response|bool
+	 * @return \Rest\Server\Response|bool
 	 */
 	public function handleRequest(Request $request){
 		$this->collectRoutes();

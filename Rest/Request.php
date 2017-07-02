@@ -3,7 +3,7 @@
 namespace Rest;
 
 
-final class Request{
+class Request{
 	const METHOD_GET 		= "GET";
 	const METHOD_POST 		= "POST";
 	const METHOD_PUT 		= "PUT";
@@ -11,27 +11,39 @@ final class Request{
 	const METHOD_DELETE 	= "DELETE";
 
 	/**
-	 * @access private
-	 * @var string
+	 * @access protected
+	 * @var array
 	 */
-	private $method;
+	protected $headers;
 	
 	/**
-	 * @acces private
+	 * @access protected
+	 * @var string
+	 */
+	protected $method;
+	
+	/**
+	 * @acces protected
 	 * @var string[]
 	 */
-	private $parameters;
+	protected $parameters;
 	
 	/**
-	 * @access private
+	 * @access protected
 	 * @var string
 	 */
-	private $uri;
+	protected $uri;
 	
-	public function __construct(){
-		$this->uri = isset($_SERVER["PATH_INFO"]) ? $_SERVER["PATH_INFO"] : preg_replace("/^(.+)\?.*\$/", "\$1", $_SERVER["REQUEST_URI"]);
-		$this->method = $_SERVER["REQUEST_METHOD"];
-		$this->parameters = $this->parseQueryString();
+	/**
+	 * @access public
+	 * @param string $uri
+	 * @param string $method
+	 */
+	public function __construct($uri, $method = self::METHOD_GET){
+		$this->headers = [];
+		$this->parameters = [];
+		$this->uri = $this->sanitizeURI($uri);
+		$this->method = $method;
 	}
 	
 	/**
@@ -58,7 +70,11 @@ final class Request{
 		return $this->uri;
 	}
 	
-	private function parseQueryString(){
+	/**
+	 * @access protected
+	 * @return void
+	 */
+	protected function parseQueryString(){
 		$query = $_SERVER["QUERY_STRING"];
 		$parameters = [];
 		
@@ -69,5 +85,20 @@ final class Request{
 				
 			$this->parameters[$name] = $value;			
 		}
+	}
+	
+	protected function sanitizeURI($uri){
+		$uri = preg_replace("/^(.*)#.+\$/U", "$1", $uri);
+		$uri = preg_replace("/^(.*)\?.+\$/U", "$1", $uri);
+		
+		if (!$uri || $uri[0] != "/") {
+			$uri = "/" . $uri;
+		}
+		
+		if ($uri != "/" && $uri[strlen($uri) - 1] == "/") {
+			$uri = substr($uri, 0, strlen($uri) - 1);
+		}
+
+		return $uri;
 	}
 }

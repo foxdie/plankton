@@ -3,8 +3,8 @@
 namespace Rest\Server;
 
 
-use Rest\Request;
-use Rest\Response;
+use Rest\Server\Request;
+use Rest\Server\Response;
 
 class Server{
 	/**
@@ -52,7 +52,7 @@ class Server{
 	
 	/**
 	 * @access protected
-	 * @param \Rest\Response $response
+	 * @param \Rest\Server\Response $response
 	 * @throws \RuntimeException
 	 * @return void
 	 */
