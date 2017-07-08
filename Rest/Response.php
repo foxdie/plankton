@@ -156,6 +156,6 @@ class Response{
 	 * @return string
 	 */
 	public function __toString(){
-		return $this->content;
+		return $this->content . "\n\n";
 	}
 }
