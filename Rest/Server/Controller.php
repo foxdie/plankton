@@ -91,8 +91,8 @@ abstract class Controller{
 		if ($doc && preg_match("/@Route[space]*\((.+)\)/i", $doc, $matches)) {
 			$route = new Route(trim(str_replace(["'", "\""], "", $matches[1])));
 				
-			if (preg_match("/@method[space]*\((get|post|put|patch|delete)\)/i", $doc, $matches)) {
-				$route->setMethod(strtoupper($matches[1]));
+			if (preg_match("/@method[space]*\(.*(get|post|put|patch|delete).*\)/i", $doc, $matches)) {
+				$route->setMethod(strtoupper(trim(str_replace(["'", "\""], "", $matches[1]))));
 			}
 			
 			return $route;

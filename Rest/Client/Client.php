@@ -108,7 +108,7 @@ class Client{
 			throw new \InvalidArgumentException("Invalid callback");
 		}
 		
-		return is_array($callback) ? call_user_func_array($callback, $request) : call_user_func($callback, $request);
+		return is_array($callback) ? call_user_func_array($callback, $request) : call_user_func($callback, $response);
 	}
 	
 	/**
@@ -129,17 +129,47 @@ class Client{
 	 */
 	private function curl(Request $request){
 		$ch = curl_init($this->apiEntryPoint . $request->getURI());
-		
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
+
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $this->enableSSL);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $this->enableSSL ? 2 : 0);
 		
-		if (!curl_exec($ch)) {
-			return false;
+		//capture headers
+		$headers = [];
+		curl_setopt($ch, CURLOPT_HEADERFUNCTION, function($ch, $str) use (&$headers){
+			$headers[] = $str;
+			return strlen($str);
+		});
+
+		//post
+		if ($request->getMethod() == Request::METHOD_POST) {
+			curl_setopt($ch, CURLOPT_POST, true);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $request->getData());
 		}
 		
+		//request
+		$content = curl_exec($ch);
+		
+		if ($content === false || curl_errno($ch)) {
+			return false;
+		}
+
+		$infos = curl_getinfo($ch);
 		curl_close($ch);
 		
-		return new Response();
+		//response
+		$response = new Response();
+		$response
+			->setContent($content)
+			->setCode($infos["http_code"]);
+		
+		//set headers
+		foreach ($headers as $name => $value) {
+			if (preg_match("/^(.+): (.+)\$/", $value, $matches)) {
+				$response->setHeader($matches[1], explode(",", $matches[2]));
+			}
+		}
+			
+		return $response;
 	}
 }

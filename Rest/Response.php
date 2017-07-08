@@ -23,17 +23,17 @@ class Response{
 	 * @access protected
 	 * @var string
 	 */
-	protected $data;
+	protected $content;
 
 	/**
 	 * @access public
-	 * @param string $data
+	 * @param string $content
 	 */
-	public function __construct($data = ""){
-		$this->data = $data;
+	public function __construct($content = ""){
+		$this->content = $content;
 		$this->code = 200;
 		
-		$this->setHeader("Content-length", 	strlen($data));
+		$this->setHeader("Content-length", 	strlen($content));
 		$this->setHeader("Content-type", 	self::CONTENT_TYPE_JSON);
 	}
 	
@@ -41,18 +41,18 @@ class Response{
 	 * @access public
 	 * @return string
 	 */
-	public function getData(){
-		return $this->data;
+	public function getContent(){
+		return $this->content;
 	}
 	
 	/**
 	 * @access public
-	 * @param string $data
+	 * @param string $content
 	 * @return \Rest\Response
 	 */
-	public function setData($data){
-		$this->data = $data;
-		$this->setHeader("Content-length", strlen($this->data));
+	public function setContent($content){
+		$this->content = $content;
+		$this->setHeader("Content-length", strlen($this->content));
 		
 		return $this;
 	}
@@ -97,8 +97,8 @@ class Response{
 	 * @access public
 	 * @return int
 	 */
-	public function getContentLenght(){
-		return $this->getHeader("Content-lenght");
+	public function getContentLength(){
+		return $this->getHeader("Content-length");
 	}
 	
 	/**
@@ -138,11 +138,15 @@ class Response{
 	/**
 	 * @access public
 	 * @param string $key
-	 * @param string $value
+	 * @param mixed $value
 	 * @return \Rest\Response
 	 */
 	public function setHeader($key, $value){
-		$this->headers[$key] = $value;
+		if (is_array($value)) {
+			$value = implode(", ", array_map("trim", $value));
+		}
+		
+		$this->headers[trim($key)] = trim($value);
 		
 		return $this;
 	}
@@ -152,6 +156,6 @@ class Response{
 	 * @return string
 	 */
 	public function __toString(){
-		return $this->data;
+		return $this->content;
 	}
 }

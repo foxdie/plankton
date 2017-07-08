@@ -1,4 +1,4 @@
 RewriteEngine On
 
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule (.+) index.php/$1 [L,QSA]
+RewriteRule ^api/v1/(.+) server.php/$1 [L,QSA]

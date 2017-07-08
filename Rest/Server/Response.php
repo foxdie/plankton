@@ -43,32 +43,33 @@ class Response extends \Rest\Response{
 	
 	/**
 	 * @access public
-	 * @param string $data
+	 * @param string $content
 	 */
-	public function __construct($data = ""){
-		$this->data = $data;
+	public function __construct($content = ""){
+		$this->content = $content;
 		$this->code = 200;
 	
-		$this->setHeader("Content-length", 	strlen($data));
+		$this->setHeader("Content-length", 	strlen($content));
 		$this->setHeader("Content-type", 	self::CONTENT_TYPE_JSON);
+		$this->setHeader("Cache-Control", 	["no-cache", "no-store", "must-revalidate"]);
 	}
 	
 	/**
 	 * {@inheritDoc}
-	 * @see \Rest\Response::setData()
+	 * @see \Rest\Response::setContent()
 	 */
-	public function setData($data){
-		if (is_array($data)) {
+	public function setContent($content){
+		if (is_array($content)) {
 			switch ($this->headers["Content-type"]) {
 				case self::CONTENT_TYPE_JSON :
-					$data = self::serializeJSON($data);
+					$content = self::serializeJSON($content);
 					break;
 				case self::CONTENT_TYPE_XML :
-					$data = self::serializeXML($data);
+					$content = self::serializeXML($content);
 					break;
 			}
 		}
 		
-		parent::setData($data);
+		parent::setContent($content);
 	}
 }

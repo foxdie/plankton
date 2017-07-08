@@ -22,7 +22,7 @@ class APIController extends Controller{
 		$response
 		->setContentType(Response::CONTENT_TYPE_JSON)
 		->setCode(200)
-		->setData([
+		->setContent([
 			[ "id" 	=> $user1->getId(), "email" => $user1->getEmail()],
 			[ "id" 	=> $user2->getId(), "email" => $user2->getEmail()]
 		]);
@@ -42,7 +42,7 @@ class APIController extends Controller{
 		$response
 			->setContentType(Response::CONTENT_TYPE_JSON)
 			->setCode(200)
-			->setData([
+			->setContent([
 				"id" 	=> $user->getId(), 
 				"email" => $user->getEmail()
 			]);
@@ -84,7 +84,7 @@ class APIController extends Controller{
 		$response
 			->setContentType(Response::CONTENT_TYPE_JSON)
 			->setCode(200)
-			->setData([
+			->setContent([
 				"id" 	=> $user->getId(),
 				"email" => $user->getEmail()
 			]);
@@ -110,7 +110,7 @@ class APIController extends Controller{
 		$response
 			->setContentType(Response::CONTENT_TYPE_JSON)
 			->setCode(200)
-			->setData([
+			->setContent([
 				"id" 	=> $user->getId(),
 				"email" => $user->getEmail()
 			]);

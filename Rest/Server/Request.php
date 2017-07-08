@@ -12,9 +12,9 @@ class Request extends \Rest\Request{
 			isset($_SERVER["PATH_INFO"]) ? $_SERVER["PATH_INFO"] : preg_replace("/^(.+)\?.*\$/", "\$1", $_SERVER["REQUEST_URI"]), 
 			$_SERVER["REQUEST_METHOD"]
 		);
-		
-		$this->parameters = $this->parseQueryString();
-		$this->headers = $this->getHeaders();
+
+		parse_str($_SERVER["QUERY_STRING"], $this->parameters);
+		$this->headers = $this->parseHeaders();
 	}
 	
 	/**
@@ -22,7 +22,7 @@ class Request extends \Rest\Request{
 	 * @return string[]
 	 * @todo
 	 */
-	private function getHeaders(){
+	private function parseHeaders(){
 		return [];
 	}
 }

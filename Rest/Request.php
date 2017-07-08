@@ -69,24 +69,7 @@ class Request{
 	public function getURI(){
 		return $this->uri;
 	}
-	
-	/**
-	 * @access protected
-	 * @return void
-	 */
-	protected function parseQueryString(){
-		$query = $_SERVER["QUERY_STRING"];
-		$parameters = [];
-		
-		foreach (explode("&", $query) as $parameter) {
-			$parts = explode("=", $parameter);
-			$name = $parts[0];
-			$value = isset($parts[1]) ? $parts[1] : NULL;
-				
-			$this->parameters[$name] = $value;			
-		}
-	}
-	
+
 	protected function sanitizeURI($uri){
 		$uri = preg_replace("/^(.*)#.+\$/U", "$1", $uri);
 		$uri = preg_replace("/^(.*)\?.+\$/U", "$1", $uri);
