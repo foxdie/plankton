@@ -58,13 +58,13 @@ class APIController extends Controller{
 	public function createUser($id){
 		$response = new Response();
 	
-		$id = 1; //create user
+		$id = 23; //create user
 		$user = new User($id);
 		
 		$response
 			->setContentType(Response::CONTENT_TYPE_JSON)
 			->setCode(201)
-			->setLocation("/admin/user/{$user->getId()}");
+			->setLocation("/user/{$user->getId()}");
 			
 		return $response;
 	}

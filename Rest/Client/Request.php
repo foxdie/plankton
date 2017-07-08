@@ -24,10 +24,16 @@ class Request extends \Rest\Request{
 	/**
 	 * @access public
 	 * @param string $name
-	 * @return string|NULL
+	 * @return string|false
 	 */
 	public function getHeader($name){
-		return isset($this->headers[$name]) ? $this->headers[$name] : NULL;
+		foreach ($this->headers as $key => $value) {
+			if (strtolower($name) == strtolower($key)) {
+				return $value;
+			}
+		}
+		
+		return false;
 	}
 	
 	/**

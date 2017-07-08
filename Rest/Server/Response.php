@@ -49,8 +49,8 @@ class Response extends \Rest\Response{
 		$this->content = $content;
 		$this->code = 200;
 	
-		$this->setHeader("Content-length", 	strlen($content));
-		$this->setHeader("Content-type", 	self::CONTENT_TYPE_JSON);
+		$this->setHeader("Content-Length", 	strlen($content));
+		$this->setHeader("Content-Type", 	self::CONTENT_TYPE_JSON);
 		$this->setHeader("Cache-Control", 	["no-cache", "no-store", "must-revalidate"]);
 	}
 	
@@ -60,7 +60,7 @@ class Response extends \Rest\Response{
 	 */
 	public function setContent($content){
 		if (is_array($content)) {
-			switch ($this->headers["Content-type"]) {
+			switch ($this->headers["Content-Type"]) {
 				case self::CONTENT_TYPE_JSON :
 					$content = self::serializeJSON($content);
 					break;

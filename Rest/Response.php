@@ -33,8 +33,8 @@ class Response{
 		$this->content = $content;
 		$this->code = 200;
 		
-		$this->setHeader("Content-length", 	strlen($content));
-		$this->setHeader("Content-type", 	self::CONTENT_TYPE_JSON);
+		$this->setHeader("Content-Length", 	strlen($content));
+		$this->setHeader("Content-Type", 	self::CONTENT_TYPE_JSON);
 	}
 	
 	/**
@@ -52,7 +52,7 @@ class Response{
 	 */
 	public function setContent($content){
 		$this->content = $content;
-		$this->setHeader("Content-length", strlen($this->content));
+		$this->setHeader("Content-Length", strlen($this->content));
 		
 		return $this;
 	}
@@ -62,7 +62,7 @@ class Response{
 	 * @return string
 	 */
 	public function getContentType(){
-		return $this->getHeader("Content-type");
+		return $this->getHeader("Content-Type");
 	}
 	
 	/**
@@ -71,7 +71,7 @@ class Response{
 	 * @return \Rest\Response
 	 */
 	public function setContentType($contentType){
-		return $this->setHeader("Content-type", $contentType);
+		return $this->setHeader("Content-Type", $contentType);
 	}
 	
 	/**
@@ -98,7 +98,7 @@ class Response{
 	 * @return int
 	 */
 	public function getContentLength(){
-		return $this->getHeader("Content-length");
+		return $this->getHeader("Content-Length");
 	}
 	
 	/**
@@ -129,10 +129,16 @@ class Response{
 	/**
 	 * @access public
 	 * @param string $name
-	 * @return string|NULL
+	 * @return string|false
 	 */
 	public function getHeader($name){
-		return isset($this->headers[$name]) ? $this->headers[$name] : NULL;
+		foreach ($this->headers as $key => $value) {
+			if (strtolower($name) == strtolower($key)) {
+				return $value;
+			}
+		}
+		
+		return false;
 	}
 	
 	/**
