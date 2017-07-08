@@ -13,8 +13,8 @@ $client->enableSSL(false);
 /**
  * GET example
  */
-$client->get("/user/1", function(Response $response){
-	echo "<h4>GET /user/1</h4>";
+$client->get("/user", function(Response $response){
+	echo "<h4>GET /api/v1/user/1</h4>";
 	echo "<div>code: " . $response->getCode() . "</div>";
 	foreach ($response->getHeaders() as $name => $value) {
 		echo "<div>{$name}: {$value}</div>";
@@ -25,10 +25,51 @@ $client->get("/user/1", function(Response $response){
 /**
  * POST example
  */
-$postData = ["email" => "dummy@localhost"];
+$data = ["email" => "postme@localhost"];
 
-$client->post("/user", $postData, function(Response $response){
+$client->post("/user", $data, function(Response $response){
 	echo "<h4>POST /user</h4>";
+	echo "<div>code: " . $response->getCode() . "</div>";
+	foreach ($response->getHeaders() as $name => $value) {
+		echo "<div>{$name}: {$value}</div>";
+	}
+	echo "<div>Content: " . $response . "</div>";
+});
+
+/**
+ * PUT example
+ */
+$data = ["email" => "putme@localhost"];
+
+$client->put("/user/1", $data, function(Response $response){
+	echo "<h4>PUT /user/1</h4>";
+	echo "<div>code: " . $response->getCode() . "</div>";
+	foreach ($response->getHeaders() as $name => $value) {
+		echo "<div>{$name}: {$value}</div>";
+	}
+	echo "<div>Content: " . $response . "</div>";
+});
+	
+/**
+ * PATCH example
+ */
+$data = ["email" => "patchme@localhost"];
+
+$client->patch("/user/1", $data, function(Response $response){
+	echo "<h4>PATCH /user/1</h4>";
+	echo "<div>code: " . $response->getCode() . "</div>";
+	foreach ($response->getHeaders() as $name => $value) {
+		echo "<div>{$name}: {$value}</div>";
+	}
+	echo "<div>Content: " . $response . "</div>";
+});
+
+/**
+ * DELETE example
+ */
+
+$client->delete("/user/1", function(Response $response){
+	echo "<h4>DELETE /user</h4>";
 	echo "<div>code: " . $response->getCode() . "</div>";
 	foreach ($response->getHeaders() as $name => $value) {
 		echo "<div>{$name}: {$value}</div>";

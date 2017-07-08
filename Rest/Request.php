@@ -35,6 +35,12 @@ class Request{
 	protected $uri;
 	
 	/**
+	 * @access protected
+	 * @var array
+	 */
+	protected $data;
+	
+	/**
 	 * @access public
 	 * @param string $uri
 	 * @param string $method
@@ -44,6 +50,7 @@ class Request{
 		$this->parameters = [];
 		$this->uri = $this->sanitizeURI($uri);
 		$this->method = $method;
+		$this->data = [];
 	}
 	
 	/**
@@ -70,6 +77,30 @@ class Request{
 		return $this->uri;
 	}
 
+	/**
+	 * @access public
+	 * @param string $key optional
+	 * return array|mixed
+	 */
+	public function getData($key = false){
+		if ($key === false) {
+			return $this->data;
+		}
+		
+		return isset($this->data[$key]) ? $this->data[$key] : NULL;
+	}
+	
+	/**
+	 * @access public
+	 * @param array $data
+	 * @return \Rest\Request
+	 */
+	public function setData(array $data){
+		$this->data = $data;
+	
+		return $this;
+	}
+	
 	protected function sanitizeURI($uri){
 		$uri = preg_replace("/^(.*)#.+\$/U", "$1", $uri);
 		$uri = preg_replace("/^(.*)\?.+\$/U", "$1", $uri);

@@ -5,6 +5,7 @@ namespace Test\Controller;
 use Rest\Server\Response;
 use Rest\Server\Controller;
 use Test\Entity\User;
+use Rest\Server\Request;
 
 
 class APIController extends Controller{
@@ -13,12 +14,13 @@ class APIController extends Controller{
 	 * @Route(/user)
 	 * @Method(GET)
 	 */
-	public function listUsers(){
-		$response = new Response();
-		
+	public function listUsers(Request $request){
+		//list users
 		$user1 = new User(1);
 		$user2 = new User(2);
 		
+		//response
+		$response = new Response();
 		$response
 		->setContentType(Response::CONTENT_TYPE_JSON)
 		->setCode(200)
@@ -35,10 +37,12 @@ class APIController extends Controller{
 	 * @Route(/user/{id})
 	 * @Method(GET)
 	 */
-	public function getUser($id){
+	public function getUser($id, Request $request){
+		//get user
 		$response = new Response();
 		$user = new User($id);
 		
+		//response
 		$response
 			->setContentType(Response::CONTENT_TYPE_JSON)
 			->setCode(200)
@@ -55,12 +59,13 @@ class APIController extends Controller{
 	 * @Route(/user)
 	 * @Method(POST)
 	 */
-	public function createUser($id){
-		$response = new Response();
-	
-		$id = 23; //create user
+	public function createUser(Request $request){
+		//create user
+		$id = 23; 
 		$user = new User($id);
 		
+		//response
+		$response = new Response();
 		$response
 			->setContentType(Response::CONTENT_TYPE_JSON)
 			->setCode(201)
@@ -74,13 +79,13 @@ class APIController extends Controller{
 	 * @Route(/user/{id})
 	 * @Method(PUT)
 	 */
-	public function updateUser($id){
-		$response = new Response();
-	
-		//update
+	public function putUser($id, Request $request){
+		//update user
 		$user = new User($id);
-		$user->setEmail($_POST["email"]);
+		$user->setEmail($request->getData("email"));
 		
+		//response
+		$response = new Response();
 		$response
 			->setContentType(Response::CONTENT_TYPE_JSON)
 			->setCode(200)
@@ -97,16 +102,13 @@ class APIController extends Controller{
 	 * @Route(/user/{id})
 	 * @Method(PATCH)
 	 */
-	public function updateUserEmail($id){
-		$response = new Response();
-
-		//fake post data for the demo
-		$_POST["email"] = "dummy@localhost";
-		
-		//patch
+	public function patchUser($id, Request $request){
+		//patch user
 		$user = new User($id);
-		$user->setEmail($_POST["email"]);
+		$user->setEmail($request->getData("email"));
 		
+		//response
+		$response = new Response();
 		$response
 			->setContentType(Response::CONTENT_TYPE_JSON)
 			->setCode(200)
@@ -119,16 +121,16 @@ class APIController extends Controller{
 	}
 	
 	/**
-	 * PATCH example
+	 * DELETE example
 	 * @Route(/user/{id})
 	 * @Method(DELETE)
 	 */
 	public function deleteUser($id){
-		$response = new Response();
-	
 		//delete user
 		//...
 	
+		//response
+		$response = new Response();
 		$response->setCode(204);
 			
 		return $response;

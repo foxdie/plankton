@@ -13,6 +13,9 @@ class Request extends \Rest\Request{
 			$_SERVER["REQUEST_METHOD"]
 		);
 
+		parse_str(file_get_contents("php://input"), $data);
+		$this->setData($data);
+		
 		parse_str($_SERVER["QUERY_STRING"], $this->parameters);
 		$this->headers = $this->parseHeaders();
 	}

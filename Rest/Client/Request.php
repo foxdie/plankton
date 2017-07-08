@@ -5,12 +5,6 @@ namespace Rest\Client;
 
 class Request extends \Rest\Request{
 	/**
-	 * @access protected
-	 * @var array
-	 */
-	protected $data;
-	
-	/**
 	 * @access public
 	 * @param string $uri
 	 * @param string $method
@@ -45,25 +39,6 @@ class Request extends \Rest\Request{
 	public function setHeader($key, $value){
 		$this->headers[$key] = $value;
 	
-		return $this;
-	}
-	
-	/**
-	 * @access public
-	 * return array
-	 */
-	public function getData(){
-		return $this->data;
-	}
-	
-	/**
-	 * @access public
-	 * @param array $data
-	 * @return \Rest\Client\Request
-	 */
-	public function setData(array $data){
-		$this->data = $data;
-		
 		return $this;
 	}
 }

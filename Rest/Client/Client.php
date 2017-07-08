@@ -141,10 +141,17 @@ class Client{
 			return strlen($str);
 		});
 
-		//post
-		if ($request->getMethod() == Request::METHOD_POST) {
-			curl_setopt($ch, CURLOPT_POST, true);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $request->getData());
+		//method
+		switch ($request->getMethod()) {
+			case Request::METHOD_DELETE:
+			case Request::METHOD_PATCH:
+			case Request::METHOD_PUT:
+				curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $request->getMethod());
+				curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($request->getData()));
+				break;
+			case Request::METHOD_POST:
+				curl_setopt($ch, CURLOPT_POST, true);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $request->getData());
 		}
 		
 		//request
