@@ -3,8 +3,7 @@
 use Rest\Client\Client;
 use Rest\Client\Response;
 
-
-require_once(__DIR__ . "/bootstrap.php");
+require_once(__DIR__ . "/../bootstrap.php");
 
 $client = new Client("http://rest/api/v1");
 
