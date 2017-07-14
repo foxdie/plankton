@@ -5,6 +5,8 @@ namespace Rest\Server;
 
 use Rest\Server\Request;
 use Rest\Server\Response;
+use Rest\Exception;
+use Rest\NotFoundException;
 
 class Server{
 	/**
@@ -14,11 +16,18 @@ class Server{
 	protected $controllers;
 	
 	/**
+	 * @access protected
+	 * @var \Rest\Server\Request
+	 */
+	protected $request;
+	
+	/**
 	 * @access public
 	 * @return void
 	 */
 	public function __construct(){
 		$this->controllers = [];
+		$this->request = new Request();
 	}
 	
 	/**
@@ -36,17 +45,12 @@ class Server{
 	 * @throws \RuntimeException
 	 * @return void
 	 */
-	public function run(){
-		$request = new Request();
-
-		foreach ($this->controllers as $controller) {
-			if ($ret = $controller->handleRequest($request)) {
-				if ($ret instanceof Response) {
-					$this->respond($ret);	
-				}
-				
-				return;
-			}
+	public function run(){		
+		try{
+			$this->handleRequest();
+		}
+		catch (Exception $e) {
+			$this->handleException($e);
 		}
 	}
 	
@@ -56,7 +60,7 @@ class Server{
 	 * @throws \RuntimeException
 	 * @return void
 	 */
-	protected function respond(Response $response){
+	protected function send(Response $response){
 		if (headers_sent()) {
 			throw new \RuntimeException("headers already sent");
 		}
@@ -68,5 +72,41 @@ class Server{
 		}
 		
 		echo $response;
+	}
+	
+	/**
+	 * @access protected
+	 * @throws \Rest\Exception
+	 * @return void
+	 */
+	protected function handleRequest(){
+		foreach ($this->controllers as $controller) {
+			if ($ret = $controller->handleRequest($this->request)) {
+				if ($ret instanceof Response) {
+					$this->send($ret);
+				}
+					
+				return;
+			}
+		}
+		
+		throw new NotFoundException();
+	}
+	
+	/**
+	 * @access protected
+	 * @param \Rest\Exception $e
+	 * @return void
+	 */
+	protected function handleException(Exception $e){
+		foreach ($this->controllers as $controller) {
+			if ($ret = $controller->handleException($e, $this->request)) {
+				if ($ret instanceof Response) {
+					$this->send($ret);
+				}
+					
+				return;
+			}
+		}
 	}
 }
