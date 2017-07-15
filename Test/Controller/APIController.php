@@ -17,8 +17,10 @@ class APIController extends Controller{
 	 */
 	public function listUsers(Request $request){
 		//list users
-		$user1 = new User(1);
-		$user2 = new User(2);
+		$page = intval($request->getParameter("page")) ?: 1;
+		
+		$user1 = new User(1 + 2 * ($page - 1));
+		$user2 = new User(2 + 2 * ($page - 1));
 		
 		//response
 		$response = new Response();
@@ -150,6 +152,22 @@ class APIController extends Controller{
 		->setContentType(Response::CONTENT_TYPE_JSON)
 		->setContent(["error" => $e->getMessage()]);
 		
+		return $response;
+	}
+	
+	/**
+	 * @Exception(*)
+	 * @param \Rest\Exception
+	 * @param \Rest\Server\Request $request
+	 * @return \Rest\Server\Response
+	 */
+	public function catchException(Exception $e, Request $request) {
+		$response = new Response();
+		$response
+		->setCode($e->getCode())
+		->setContentType(Response::CONTENT_TYPE_JSON)
+		->setContent(["error" => $e->getMessage()]);
+	
 		return $response;
 	}
 }

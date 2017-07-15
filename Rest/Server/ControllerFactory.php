@@ -5,7 +5,7 @@ namespace Rest\Server;
 
 use Rest\Server\Controller;
 use Rest\Server\Request;
-use Rest\Route;
+use Rest\Server\Route;
 
 class ControllerFactory {
 	/**
@@ -50,7 +50,7 @@ class ControllerFactory {
 	 * @access private
 	 * @static
 	 * @param \ReflectionMethod $method
-	 * @return bool|\Rest\Route
+	 * @return bool|\Rest\Server\Route
 	 */
 	private static function getRouteFromMethod(\ReflectionMethod $method){
 		if (!$method->isPublic() || method_exists("Rest\Server\Controller", $method->getName())) {

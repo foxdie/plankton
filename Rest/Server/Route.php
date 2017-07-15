@@ -1,6 +1,6 @@
 <?php
 
-namespace Rest;
+namespace Rest\Server;
 
 
 final class Route{
@@ -19,11 +19,12 @@ final class Route{
 	/**
 	 * @access public
 	 * @param string $uri
+	 * @param string $method
 	 * @return void
 	 */
-	public function __construct($uri){
+	public function __construct($uri, $method = Request::METHOD_GET){
 		$this->uri = $uri;
-		$this->method = Request::METHOD_GET;
+		$this->method = $method;
 	}
 	
 	/**
@@ -45,7 +46,7 @@ final class Route{
 	/**
 	 * @access public
 	 * @param string $uri
-	 * @return \Rest\Route
+	 * @return \Rest\Server\Route
 	 */
 	public function setURI($uri){
 		$this->uri = $uri;
@@ -56,7 +57,7 @@ final class Route{
 	/**
 	 * @access public
 	 * @param string $method
-	 * @return \Rest\Route
+	 * @return \Rest\Server\Route
 	 */
 	public function setMethod($method){
 		$this->method = $method;

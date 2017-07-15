@@ -3,7 +3,7 @@
 namespace Rest\Server;
 
 
-use Rest\Route;
+use Rest\Server\Route;
 use Rest\Server\Request;
 use Rest\Server\Response;
 use Rest\Exception;
@@ -99,8 +99,9 @@ abstract class Controller{
 	
 	/**
 	 * @access public
-	 * @param \Rest\Route $route
+	 * @param \Rest\Server\Route $route
 	 * @param callable $callable
+	 * @return void
 	 */
 	public function addRoute(Route $route, callable $callable){
 		if (!$this->routes) {
@@ -114,6 +115,7 @@ abstract class Controller{
 	 * @access public
 	 * @param string $exception
 	 * @param callable $callable
+	 * @return void
 	 */
 	public function addExceptionHandler($exception, callable $callable){
 		if (!$this->exceptionHandlers) {

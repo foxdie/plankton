@@ -71,6 +71,15 @@ class Request{
 	
 	/**
 	 * @access public
+	 * @param string $name
+	 * @return boolean|mixed
+	 */
+	public function getParameter($name){
+		return isset($this->parameters[$name]) ? $this->parameters[$name] : false;
+	}
+	
+	/**
+	 * @access public
 	 * @return string
 	 */
 	public function getURI(){
@@ -101,6 +110,34 @@ class Request{
 		return $this;
 	}
 	
+	/**
+	 * @access public
+	 * @return array
+	 */
+	public function getHeaders(){
+		return $this->headers;
+	}
+
+	/**
+	 * @access public
+	 * @param string $name
+	 * @return string|false
+	 */
+	public function getHeader($name){
+		foreach ($this->headers as $key => $value) {
+			if (strtolower($name) == strtolower($key)) {
+				return $value;
+			}
+		}
+	
+		return false;
+	}
+	
+	/**
+	 * @access protected
+	 * @param string $uri
+	 * @return string
+	 */
 	protected function sanitizeURI($uri){
 		$uri = preg_replace("/^(.*)#.+\$/U", "$1", $uri);
 		$uri = preg_replace("/^(.*)\?.+\$/U", "$1", $uri);
