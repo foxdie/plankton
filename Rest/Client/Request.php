@@ -14,22 +14,7 @@ class Request extends \Rest\Request{
 		
 		$this->data = [];
 	}
-	
-	/**
-	 * @access public
-	 * @param string $name
-	 * @return string|false
-	 */
-	public function getHeader($name){
-		foreach ($this->headers as $key => $value) {
-			if (strtolower($name) == strtolower($key)) {
-				return $value;
-			}
-		}
-		
-		return false;
-	}
-	
+
 	/**
 	 * @access public
 	 * @param string $key

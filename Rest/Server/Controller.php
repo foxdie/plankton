@@ -3,17 +3,23 @@
 namespace Rest\Server;
 
 
-use Rest\Route;
-use ReflectionClass;
-use Rest\Request;
+use Rest\Server\Route;
+use Rest\Server\Request;
 use Rest\Server\Response;
+use Rest\Exception;
 
 abstract class Controller{
 	/**
 	 * @access private
-	 * @var Route[]
+	 * @var \SplObjectStorage
 	 */
 	private $routes;
+	
+	/**
+	 * @access private
+	 * @var \SplObjectStorage
+	 */
+	private $exceptionHandlers;
 	
 	/**
 	 * @acces public
@@ -25,14 +31,26 @@ abstract class Controller{
 	
 	/**
 	 * @access public
-	 * @return \Rest\Route[]
+	 * @return \SplObjectStorage
 	 */
 	public function getRoutes(){
 		if (!$this->routes) {
-			$this->collectRoutes();
+			ControllerFactory::collectRoutes($this);
 		}
 		
 		return $this->routes;
+	}
+	
+	/**
+	 * @acccess public
+	 * @return \SplObjectStorage
+	 */
+	public function getExceptionHandlers(){
+		if (!$this->exceptionHandlers) {
+			ControllerFactory::collectExceptions($this);
+		}
+	
+		return $this->exceptionHandlers;
 	}
 	
 	/**
@@ -41,13 +59,15 @@ abstract class Controller{
 	 * @return \Rest\Server\Response|bool
 	 */
 	public function handleRequest(Request $request){
-		$this->collectRoutes();
+		ControllerFactory::collectRoutes($this);
 		
-		foreach ($this->routes as $callable => $route) {
+		foreach ($this->routes as $route) {
 			if ($route->matchRequest($request)) {
 				$args = $this->getPlaceholders($route, $request) ?: [];
 				$args[] = $request;
-				$ret = call_user_func_array([$this, $callable], $args);
+				
+				$callable = $this->routes[$route];
+				$ret = call_user_func_array($callable, $args);
 				
 				return $ret instanceof Response ? $ret : true;
 			}
@@ -57,56 +77,52 @@ abstract class Controller{
 	}
 	
 	/**
-	 * @access private
-	 * @return void
+	 * @access public
+	 * @param \Rest\Exception $e
+	 * @param \Rest\Server\Request $request
+	 * @return \Rest\Server\Response|bool
 	 */
-	private function collectRoutes(){
-		$this->routes = [];
+	public function handleException(Exception $e, Request $request){
+		ControllerFactory::collectExceptionHandlers($this);
 	
-		$rc = new ReflectionClass($this);
+		foreach ($this->exceptionHandlers as $exception => $handler) {
+			if (get_class($e) == "Rest\\{$exception}" || $exception == "*") {
+				$handler = $this->exceptionHandlers[$exception];
+				$ret = call_user_func_array($handler, [$e, $request]);
 	
-		foreach ($rc->getMethods() as $method) {
-			if ($route = $this->getRouteFromMethod($method)) {
-				$this->routes[$method->getName()] = $route;
+				return $ret instanceof Response ? $ret : true;
 			}
-		}
-	}
-	
-	/**
-	 * @access private
-	 * @param \ReflectionMethod $method
-	 * @return bool|\Rest\Route
-	 */
-	private function getRouteFromMethod(\ReflectionMethod $method){
-		if (!$method->isPublic() || method_exists("Rest\Server\Controller", $method->getName())) {
-			return false;
-		}
-		
-		$uri = false;
-		$httpMethod = Request::METHOD_GET;
-	
-		//annotations
-		$doc = $method->getDocComment();
-		
-		if ($doc && preg_match("/@Route[space]*\((.+)\)/i", $doc, $matches)) {
-			$route = new Route(trim(str_replace(["'", "\""], "", $matches[1])));
-				
-			if (preg_match("/@method[space]*\(.*(get|post|put|patch|delete).*\)/i", $doc, $matches)) {
-				$route->setMethod(strtoupper(trim(str_replace(["'", "\""], "", $matches[1]))));
-			}
-			
-			return $route;
-		}
-		
-		//method
-		if (preg_match("/^(get|post|put|path|delete)(.+)\$/", $method->getName(), $matches)) {
-			$route = new Route("/" . $this->formatSegment($matches[2]));
-			$route->setMethod(strtoupper($matches[1]));
-			
-			return $route;
 		}
 	
 		return false;
+	}
+	
+	/**
+	 * @access public
+	 * @param \Rest\Server\Route $route
+	 * @param callable $callable
+	 * @return void
+	 */
+	public function addRoute(Route $route, callable $callable){
+		if (!$this->routes) {
+			$this->routes = new \SplObjectStorage();
+		}
+		
+		$this->routes[$route] = $callable;
+	}
+	
+	/**
+	 * @access public
+	 * @param string $exception
+	 * @param callable $callable
+	 * @return void
+	 */
+	public function addExceptionHandler($exception, callable $callable){
+		if (!$this->exceptionHandlers) {
+			$this->exceptionHandlers = [];
+		}
+	
+		$this->exceptionHandlers[$exception] = $callable;
 	}
 	
 	/**
@@ -140,7 +156,12 @@ abstract class Controller{
 		
 		return $ret;
 	}
-	
+
+	/**
+	 * @access private
+	 * @param string $segment
+	 * @return string
+	 */
 	private function formatSegment($segment){
 		return strtolower(preg_replace("/([a-z])([A-Z])/", "$1-$2", $segment));
 	}

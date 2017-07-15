@@ -17,15 +17,6 @@ class Request extends \Rest\Request{
 		$this->setData($data);
 		
 		parse_str($_SERVER["QUERY_STRING"], $this->parameters);
-		$this->headers = $this->parseHeaders();
-	}
-	
-	/**
-	 * @access private
-	 * @return string[]
-	 * @todo
-	 */
-	private function parseHeaders(){
-		return [];
+		$this->headers = getallheaders();
 	}
 }
