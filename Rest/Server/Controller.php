@@ -22,6 +22,14 @@ abstract class Controller{
 	private $exceptionHandlers;
 	
 	/**
+	 * @access public
+	 * @param \Rest\Server\ControllerVisitor $visitor
+	 */
+	public function accept(ControllerVisitor $visitor){
+		$visitor->visit($this);
+	}
+	
+	/**
 	 * @acces public
 	 * @return string
 	 */
@@ -34,10 +42,6 @@ abstract class Controller{
 	 * @return \SplObjectStorage
 	 */
 	public function getRoutes(){
-		if (!$this->routes) {
-			ControllerFactory::collectRoutes($this);
-		}
-		
 		return $this->routes;
 	}
 	
@@ -46,10 +50,6 @@ abstract class Controller{
 	 * @return \SplObjectStorage
 	 */
 	public function getExceptionHandlers(){
-		if (!$this->exceptionHandlers) {
-			ControllerFactory::collectExceptions($this);
-		}
-	
 		return $this->exceptionHandlers;
 	}
 	
@@ -59,8 +59,6 @@ abstract class Controller{
 	 * @return \Rest\Server\Response|bool
 	 */
 	public function handleRequest(Request $request){
-		ControllerFactory::collectRoutes($this);
-		
 		foreach ($this->routes as $route) {
 			if ($route->matchRequest($request)) {
 				$args = $this->getPlaceholders($route, $request) ?: [];
@@ -83,8 +81,6 @@ abstract class Controller{
 	 * @return \Rest\Server\Response|bool
 	 */
 	public function handleException(Exception $e, Request $request){
-		ControllerFactory::collectExceptionHandlers($this);
-	
 		foreach ($this->exceptionHandlers as $exception => $handler) {
 			if (get_class($e) == "Rest\\{$exception}" || $exception == "*") {
 				$handler = $this->exceptionHandlers[$exception];

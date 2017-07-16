@@ -22,12 +22,19 @@ class Server{
 	protected $request;
 	
 	/**
+	 * @access protected
+	 * @var \Rest\Server\ControllerVisitor[]
+	 */
+	protected $visitors;
+	
+	/**
 	 * @access public
 	 * @return void
 	 */
 	public function __construct(){
 		$this->controllers = [];
 		$this->request = new Request();
+		$this->visitors = [new RouteVisitor(), new ExceptionVisitor()];
 	}
 	
 	/**
@@ -35,6 +42,10 @@ class Server{
 	 * @return Server
 	 */
 	public function registerController(Controller $controller){
+		foreach ($this->visitors as $visitor) {
+			$controller->accept($visitor);
+		}
+		
 		$this->controllers[$controller->getName()] = $controller;
 		
 		return $this;
