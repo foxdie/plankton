@@ -147,7 +147,7 @@ class Response{
 	 * @param mixed $value
 	 * @return \Rest\Response
 	 */
-	public function setHeader(string $key, mixed $value): Response{
+	public function setHeader(string $key, $value): Response{
 		if (is_array($value)) {
 			$value = implode(", ", array_map("trim", $value));
 		}

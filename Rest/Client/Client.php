@@ -128,7 +128,7 @@ class Client{
 	 * @return \Rest\Client\Response|null
 	 */
 	private function curl(Request $request): ?Response{
-		$ch = curl_init($this->apiEntryPoint . $request->getURI());
+		$ch = \curl_init($this->apiEntryPoint . $request->getURI());
 
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $this->enableSSL);
