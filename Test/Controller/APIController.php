@@ -70,7 +70,6 @@ class APIController extends Controller{
 		//response
 		$response = new Response();
 		$response
-			->setContentType(Response::CONTENT_TYPE_JSON)
 			->setCode(201)
 			->setLocation("/user/{$user->getId()}");
 			
@@ -148,9 +147,9 @@ class APIController extends Controller{
 	public function catchNotFoundException(Exception $e, Request $request): Response{
 		$response = new Response();
 		$response
-		->setCode($e->getCode())
-		->setContentType(Response::CONTENT_TYPE_JSON)
-		->setContent(["error" => $e->getMessage()]);
+			->setCode($e->getCode())
+			->setContentType(Response::CONTENT_TYPE_JSON)
+			->setContent(["error" => $e->getMessage()]);
 		
 		return $response;
 	}

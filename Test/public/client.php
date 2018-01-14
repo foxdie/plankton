@@ -57,6 +57,19 @@ $client->delete("/user/1", function(Response $response){
 });
 
 function debug(Response $response){
-	echo "<div>code: " . $response->getCode() . "</div>";
-	debug($response);
+	echo "<div>HTTP code: " . $response->getCode() . "</div>";
+	echo "<div>Response headers:</div>";
+	echo "<ul>";
+	
+	foreach ($response->getHeaders() as $name => $value) {
+		echo "<li>{$name}: {$value}</li>";
+	}
+	
+	echo "</ul>";
+	
+	if (trim($response->getContent())) {
+		echo "<div>Content: " . $response . "</div>";
+	}
+	
+	echo "<hr>";
 }
