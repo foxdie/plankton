@@ -87,7 +87,8 @@ class Server{
 	
 	/**
 	 * @access protected
-	 * @throws \Rest\Exception
+	 * @throws \Rest\NotFoundException
+	 * @throws \RuntimeException
 	 * @return void
 	 */
 	protected function handleRequest(): void{
@@ -107,6 +108,7 @@ class Server{
 	/**
 	 * @access protected
 	 * @param \Rest\Exception $e
+	 * @throws \RuntimeException
 	 * @return void
 	 */
 	protected function handleException(Exception $e): void{

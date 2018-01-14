@@ -72,10 +72,10 @@ class Request{
 	/**
 	 * @access public
 	 * @param string $name
-	 * @return boolean|mixed
+	 * @return mixed
 	 */
 	public function getParameter(string $name){
-		return isset($this->parameters[$name]) ? $this->parameters[$name] : false;
+		return $this->parameters[$name] ?? null;
 	}
 	
 	/**
@@ -89,14 +89,14 @@ class Request{
 	/**
 	 * @access public
 	 * @param string $key optional
-	 * return array|mixed|bool
+	 * return mixed
 	 */
 	public function getData(string $key = false){
 		if ($key === false) {
 			return $this->data;
 		}
 		
-		return isset($this->data[$key]) ? $this->data[$key] : null;
+		return $this->data[$key] ?? null;
 	}
 	
 	/**
