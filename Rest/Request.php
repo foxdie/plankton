@@ -45,7 +45,7 @@ class Request{
 	 * @param string $uri
 	 * @param string $method
 	 */
-	public function __construct($uri, $method = self::METHOD_GET){
+	public function __construct(string $uri, string $method = self::METHOD_GET){
 		$this->headers = [];
 		$this->parameters = [];
 		$this->uri = $this->sanitizeURI($uri);
@@ -57,46 +57,46 @@ class Request{
 	 * @access public
 	 * @return string
 	 */
-	public function getMethod(){
+	public function getMethod(): string{
 		return $this->method;
 	}
 	
 	/**
 	 * @access public
-	 * @return \Rest\string[]
+	 * @return string[]
 	 */
-	public function getParameters(){
+	public function getParameters(): array{
 		return $this->parameters;
 	}
 	
 	/**
 	 * @access public
 	 * @param string $name
-	 * @return boolean|mixed
+	 * @return mixed
 	 */
-	public function getParameter($name){
-		return isset($this->parameters[$name]) ? $this->parameters[$name] : false;
+	public function getParameter(string $name){
+		return $this->parameters[$name] ?? null;
 	}
 	
 	/**
 	 * @access public
 	 * @return string
 	 */
-	public function getURI(){
+	public function getURI(): string{
 		return $this->uri;
 	}
 
 	/**
 	 * @access public
 	 * @param string $key optional
-	 * return array|mixed
+	 * return mixed
 	 */
-	public function getData($key = false){
-		if ($key === false) {
+	public function getData(string $key = null){
+		if ($key === null) {
 			return $this->data;
 		}
 		
-		return isset($this->data[$key]) ? $this->data[$key] : NULL;
+		return $this->data[$key] ?? null;
 	}
 	
 	/**
@@ -104,7 +104,7 @@ class Request{
 	 * @param array $data
 	 * @return \Rest\Request
 	 */
-	public function setData(array $data){
+	public function setData(array $data): Request{
 		$this->data = $data;
 	
 		return $this;
@@ -114,23 +114,23 @@ class Request{
 	 * @access public
 	 * @return array
 	 */
-	public function getHeaders(){
+	public function getHeaders(): array{
 		return $this->headers;
 	}
 
 	/**
 	 * @access public
 	 * @param string $name
-	 * @return string|false
+	 * @return string|null
 	 */
-	public function getHeader($name){
+	public function getHeader(string $name): ?string{
 		foreach ($this->headers as $key => $value) {
 			if (strtolower($name) == strtolower($key)) {
 				return $value;
 			}
 		}
 	
-		return false;
+		return null;
 	}
 	
 	/**
@@ -138,7 +138,7 @@ class Request{
 	 * @param string $uri
 	 * @return string
 	 */
-	protected function sanitizeURI($uri){
+	protected function sanitizeURI(string $uri): string{
 		$uri = preg_replace("/^(.*)#.+\$/U", "$1", $uri);
 		$uri = preg_replace("/^(.*)\?.+\$/U", "$1", $uri);
 		

@@ -22,10 +22,19 @@ abstract class Controller{
 	private $exceptionHandlers;
 	
 	/**
+	 * @access public
+	 * @param \Rest\Server\ControllerVisitor $visitor
+	 * @return void
+	 */
+	public function accept(ControllerVisitor $visitor): void{
+		$visitor->visit($this);
+	}
+	
+	/**
 	 * @acces public
 	 * @return string
 	 */
-	public function getName(){
+	public function getName(): string{
 		return get_class($this);
 	}
 	
@@ -33,11 +42,7 @@ abstract class Controller{
 	 * @access public
 	 * @return \SplObjectStorage
 	 */
-	public function getRoutes(){
-		if (!$this->routes) {
-			ControllerFactory::collectRoutes($this);
-		}
-		
+	public function getRoutes(): \SplObjectStorage{
 		return $this->routes;
 	}
 	
@@ -45,22 +50,16 @@ abstract class Controller{
 	 * @acccess public
 	 * @return \SplObjectStorage
 	 */
-	public function getExceptionHandlers(){
-		if (!$this->exceptionHandlers) {
-			ControllerFactory::collectExceptions($this);
-		}
-	
+	public function getExceptionHandlers(): \SplObjectStorage{
 		return $this->exceptionHandlers;
 	}
 	
 	/**
 	 * @access public
 	 * @param \Rest\Request $request
-	 * @return \Rest\Server\Response|bool
+	 * @return bool
 	 */
-	public function handleRequest(Request $request){
-		ControllerFactory::collectRoutes($this);
-		
+	public function handleRequest(Request $request): bool{
 		foreach ($this->routes as $route) {
 			if ($route->matchRequest($request)) {
 				$args = $this->getPlaceholders($route, $request) ?: [];
@@ -80,11 +79,9 @@ abstract class Controller{
 	 * @access public
 	 * @param \Rest\Exception $e
 	 * @param \Rest\Server\Request $request
-	 * @return \Rest\Server\Response|bool
+	 * @return bool
 	 */
-	public function handleException(Exception $e, Request $request){
-		ControllerFactory::collectExceptionHandlers($this);
-	
+	public function handleException(Exception $e, Request $request): bool{
 		foreach ($this->exceptionHandlers as $exception => $handler) {
 			if (get_class($e) == "Rest\\{$exception}" || $exception == "*") {
 				$handler = $this->exceptionHandlers[$exception];
@@ -101,52 +98,56 @@ abstract class Controller{
 	 * @access public
 	 * @param \Rest\Server\Route $route
 	 * @param callable $callable
-	 * @return void
+	 * @return Controller
 	 */
-	public function addRoute(Route $route, callable $callable){
+	public function addRoute(Route $route, callable $callable): Controller{
 		if (!$this->routes) {
 			$this->routes = new \SplObjectStorage();
 		}
 		
 		$this->routes[$route] = $callable;
+		
+		return $this;
 	}
 	
 	/**
 	 * @access public
 	 * @param string $exception
 	 * @param callable $callable
-	 * @return void
+	 * @return Controller
 	 */
-	public function addExceptionHandler($exception, callable $callable){
+	public function addExceptionHandler($exception, callable $callable): Controller{
 		if (!$this->exceptionHandlers) {
 			$this->exceptionHandlers = [];
 		}
 	
 		$this->exceptionHandlers[$exception] = $callable;
+		
+		return $this;
 	}
 	
 	/**
 	 * @access private
 	 * @param Route $route
 	 * @param Request $request
-	 * @return array|bool
+	 * @return array|null
 	 */
-	private function getPlaceholders(Route $route, Request $request){
+	private function getPlaceholders(Route $route, Request $request): ?array{
 		if (!preg_match_all("#{([^}]+)}#", $route->getURI(), $matches)) {
-			return false;
+			return null;
 		}
 		
 		$placeholders = [];
 		$regexp = "#" . $route->getURI() . "#";
 		foreach ($matches[1] as $placeholder) {
-			//capture placeholder
+			// capture placeholder
 			$regexp = str_replace("{" . $placeholder . "}", "([^/]+)", $regexp);
 			$placeholders[] = $placeholder;
 			
 		}
 
 		if (!preg_match_all($regexp, $request->getURI(), $matches)) {
-			return false;
+			return null;
 		}
 
 		$ret = [];
@@ -162,7 +163,7 @@ abstract class Controller{
 	 * @param string $segment
 	 * @return string
 	 */
-	private function formatSegment($segment){
+	private function formatSegment(string $segment): string{
 		return strtolower(preg_replace("/([a-z])([A-Z])/", "$1-$2", $segment));
 	}
 }

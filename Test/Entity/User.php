@@ -4,23 +4,49 @@ namespace Test\Entity;
 
 
 class User{
+	/**
+	 * @access private
+	 * @var int $id
+	 */
 	private $id;
+	
+	/**
+	 * @access private
+	 * @var string $email
+	 */
 	private $email;
 
-	public function __construct($id){
+	/**
+	 * @access public
+	 * @param int $id
+	 */
+	public function __construct(int $id){
 		$this->id = $id;
 		$this->email = "dummy{$id}@localhost";
 	}
 	
-	public function getId(){
+	/**
+	 * @access public
+	 * @return int
+	 */
+	public function getId(): int{
 		return $this->id;
 	}
 
-	public function getEmail(){
+	/**
+	 * @access public
+	 * @return string
+	 */
+	public function getEmail(): string{
 		return $this->email;
 	}
 
-	public function setEmail($email){
+	/**
+	 * @access public
+	 * @param string $email
+	 * @return void
+	 */
+	public function setEmail(string $email): void{
 		$this->email = $email;
 	}
 }
