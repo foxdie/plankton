@@ -47,10 +47,10 @@ class Response{
 	
 	/**
 	 * @access public
-	 * @param string $content
+	 * @param mixed $content
 	 * @return \Rest\Response
 	 */
-	public function setContent(string $content): Response{
+	public function setContent($content): Response{
 		$this->content = $content;
 		$this->setHeader("Content-Length", strlen($this->content));
 		
