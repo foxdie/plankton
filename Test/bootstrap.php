@@ -1,7 +1,16 @@
 <?php
 
+/**
+ * Simple autoloader
+ */
 class Autoloader{
-	public static function load($className) {
+	/**
+	 * @access public
+	 * @static
+	 * @param string $className
+	 * @return boolean
+	 */
+	public static function load(string $className): bool{
 		$filename = realpath(__DIR__ . "/../" . str_replace("\\", '/', $className) . ".php");
 		
 		if (file_exists($filename)) {
@@ -11,7 +20,6 @@ class Autoloader{
 			}
 		}
 		
-		//throw new Exception($className . " not found");
 		return false;
 	}
 }

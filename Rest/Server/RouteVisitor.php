@@ -40,7 +40,7 @@ class RouteVisitor implements ControllerVisitor{
 		$uri = false;
 		$httpMethod = Request::METHOD_GET;
 	
-		//annotations
+		// annotations
 		$doc = $method->getDocComment();
 	
 		if ($doc && preg_match("/@Route[space]*\((.+)\)/i", $doc, $matches)) {
@@ -53,7 +53,7 @@ class RouteVisitor implements ControllerVisitor{
 			return $route;
 		}
 	
-		//method
+		// method
 		if (preg_match("/^(get|post|put|path|delete)(.+)\$/", $method->getName(), $matches)) {
 			$route = new Route("/" . $this->formatSegment($matches[2]));
 			$route->setMethod(strtoupper($matches[1]));

@@ -15,14 +15,14 @@ class APIController extends Controller{
 	 * @Route(/user)
 	 * @Method(GET)
 	 */
-	public function listUsers(Request $request){
-		//list users
+	public function listUsers(Request $request): Response{
+		// list users
 		$page = intval($request->getParameter("page")) ?: 1;
 		
 		$user1 = new User(1 + 2 * ($page - 1));
 		$user2 = new User(2 + 2 * ($page - 1));
 		
-		//response
+		// response
 		$response = new Response();
 		$response
 		->setContentType(Response::CONTENT_TYPE_JSON)
@@ -40,12 +40,12 @@ class APIController extends Controller{
 	 * @Route(/user/{id})
 	 * @Method(GET)
 	 */
-	public function getUser($id, Request $request){
-		//get user
+	public function getUser(int $id, Request $request): Response{
+		// get user
 		$response = new Response();
 		$user = new User($id);
 		
-		//response
+		// response
 		$response
 			->setContentType(Response::CONTENT_TYPE_JSON)
 			->setCode(200)
@@ -62,15 +62,14 @@ class APIController extends Controller{
 	 * @Route(/user)
 	 * @Method(POST)
 	 */
-	public function createUser(Request $request){
-		//create user
+	public function createUser(Request $request): Response{
+		// create user
 		$id = 23; 
 		$user = new User($id);
 		
-		//response
+		// response
 		$response = new Response();
 		$response
-			->setContentType(Response::CONTENT_TYPE_JSON)
 			->setCode(201)
 			->setLocation("/user/{$user->getId()}");
 			
@@ -82,12 +81,12 @@ class APIController extends Controller{
 	 * @Route(/user/{id})
 	 * @Method(PUT)
 	 */
-	public function putUser($id, Request $request){
-		//update user
+	public function putUser(int $id, Request $request): Response{
+		// update user
 		$user = new User($id);
 		$user->setEmail($request->getData("email"));
 		
-		//response
+		// response
 		$response = new Response();
 		$response
 			->setContentType(Response::CONTENT_TYPE_JSON)
@@ -105,12 +104,12 @@ class APIController extends Controller{
 	 * @Route(/user/{id})
 	 * @Method(PATCH)
 	 */
-	public function patchUser($id, Request $request){
-		//patch user
+	public function patchUser(int $id, Request $request): Response{
+		// patch user
 		$user = new User($id);
 		$user->setEmail($request->getData("email"));
 		
-		//response
+		// response
 		$response = new Response();
 		$response
 			->setContentType(Response::CONTENT_TYPE_JSON)
@@ -128,11 +127,11 @@ class APIController extends Controller{
 	 * @Route(/user/{id})
 	 * @Method(DELETE)
 	 */
-	public function deleteUser($id){
-		//delete user
-		//...
+	public function deleteUser(int $id): Response{
+		// delete user
+		// ...
 	
-		//response
+		// response
 		$response = new Response();
 		$response->setCode(204);
 			
@@ -145,12 +144,12 @@ class APIController extends Controller{
 	 * @param \Rest\Server\Request $request
 	 * @return \Rest\Server\Response
 	 */
-	public function catchNotFoundException(Exception $e, Request $request) {
+	public function catchNotFoundException(Exception $e, Request $request): Response{
 		$response = new Response();
 		$response
-		->setCode($e->getCode())
-		->setContentType(Response::CONTENT_TYPE_JSON)
-		->setContent(["error" => $e->getMessage()]);
+			->setCode($e->getCode())
+			->setContentType(Response::CONTENT_TYPE_JSON)
+			->setContent(["error" => $e->getMessage()]);
 		
 		return $response;
 	}
@@ -161,7 +160,7 @@ class APIController extends Controller{
 	 * @param \Rest\Server\Request $request
 	 * @return \Rest\Server\Response
 	 */
-	public function catchException(Exception $e, Request $request) {
+	public function catchException(Exception $e, Request $request): Response{
 		$response = new Response();
 		$response
 		->setCode($e->getCode())

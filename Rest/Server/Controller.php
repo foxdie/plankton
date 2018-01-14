@@ -140,7 +140,7 @@ abstract class Controller{
 		$placeholders = [];
 		$regexp = "#" . $route->getURI() . "#";
 		foreach ($matches[1] as $placeholder) {
-			//capture placeholder
+			// capture placeholder
 			$regexp = str_replace("{" . $placeholder . "}", "([^/]+)", $regexp);
 			$placeholders[] = $placeholder;
 			
