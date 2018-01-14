@@ -9,7 +9,7 @@ class Request extends \Rest\Request{
 	 * @param string $uri
 	 * @param string $method
 	 */
-	public function __construct($uri, $method = self::METHOD_GET){
+	public function __construct(string $uri, string $method = self::METHOD_GET){
 		parent::__construct($uri, $method);
 		
 		$this->data = [];
@@ -21,7 +21,7 @@ class Request extends \Rest\Request{
 	 * @param string $value
 	 * @return \Rest\Client\Request
 	 */
-	public function setHeader($key, $value){
+	public function setHeader(string $key, string $value): Request{
 		$this->headers[$key] = $value;
 	
 		return $this;

@@ -29,7 +29,7 @@ class Response{
 	 * @access public
 	 * @param string $content
 	 */
-	public function __construct($content = ""){
+	public function __construct(string $content = ""){
 		$this->content = $content;
 		$this->code = 200;
 		
@@ -41,7 +41,7 @@ class Response{
 	 * @access public
 	 * @return string
 	 */
-	public function getContent(){
+	public function getContent(): string{
 		return $this->content;
 	}
 	
@@ -50,7 +50,7 @@ class Response{
 	 * @param string $content
 	 * @return \Rest\Response
 	 */
-	public function setContent($content){
+	public function setContent(string $content): Response{
 		$this->content = $content;
 		$this->setHeader("Content-Length", strlen($this->content));
 		
@@ -61,7 +61,7 @@ class Response{
 	 * @access public
 	 * @return string
 	 */
-	public function getContentType(){
+	public function getContentType(): string{
 		return $this->getHeader("Content-Type");
 	}
 	
@@ -70,15 +70,15 @@ class Response{
 	 * @param string $contentType
 	 * @return \Rest\Response
 	 */
-	public function setContentType($contentType){
+	public function setContentType(string $contentType): Response{
 		return $this->setHeader("Content-Type", $contentType);
 	}
 	
 	/**
 	 * @access public
-	 * @return number
+	 * @return int
 	 */
-	public function getCode(){
+	public function getCode(): int{
 		return $this->code;
 	}
 	
@@ -87,7 +87,7 @@ class Response{
 	 * @param int $code
 	 * @return \Rest\Response
 	 */
-	public function setCode($code){
+	public function setCode(int $code): Response{
 		$this->code = intval($code) ?: 200;
 		
 		return $this;
@@ -95,17 +95,17 @@ class Response{
 	
 	/**
 	 * @access public
-	 * @return int
+	 * @return int|null
 	 */
-	public function getContentLength(){
+	public function getContentLength(): ?int{
 		return $this->getHeader("Content-Length");
 	}
 	
 	/**
 	 * @access public
-	 * @return string
+	 * @return string|null
 	 */
-	public function getLocation(){
+	public function getLocation(): ?string{
 		return $this->getHeader("Location");
 	}
 	
@@ -114,7 +114,7 @@ class Response{
 	 * @param string $location
 	 * @return \Rest\Response
 	 */
-	public function setLocation($location){
+	public function setLocation(string $location): Response{
 		return $this->setHeader("Location", $location);
 	}
 	
@@ -122,23 +122,23 @@ class Response{
 	 * @access public
 	 * @return string[]
 	 */
-	public function getHeaders(){
+	public function getHeaders(): array{
 		return $this->headers;
 	}
 	
 	/**
 	 * @access public
 	 * @param string $name
-	 * @return string|false
+	 * @return string|null
 	 */
-	public function getHeader($name){
+	public function getHeader(string $name): ?string{
 		foreach ($this->headers as $key => $value) {
 			if (strtolower($name) == strtolower($key)) {
 				return $value;
 			}
 		}
 		
-		return false;
+		return null;
 	}
 	
 	/**
@@ -147,7 +147,7 @@ class Response{
 	 * @param mixed $value
 	 * @return \Rest\Response
 	 */
-	public function setHeader($key, $value){
+	public function setHeader(string $key, mixed $value): Response{
 		if (is_array($value)) {
 			$value = implode(", ", array_map("trim", $value));
 		}
@@ -161,7 +161,7 @@ class Response{
 	 * @access public
 	 * @return string
 	 */
-	public function __toString(){
+	public function __toString(): string{
 		return $this->content . "\n\n";
 	}
 }

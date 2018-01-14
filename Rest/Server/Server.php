@@ -41,7 +41,7 @@ class Server{
 	 * @access public
 	 * @return Server
 	 */
-	public function registerController(Controller $controller){
+	public function registerController(Controller $controller): Server{
 		foreach ($this->visitors as $visitor) {
 			$controller->accept($visitor);
 		}
@@ -56,7 +56,7 @@ class Server{
 	 * @throws \RuntimeException
 	 * @return void
 	 */
-	public function run(){		
+	public function run(): void{		
 		try{
 			$this->handleRequest();
 		}
@@ -71,7 +71,7 @@ class Server{
 	 * @throws \RuntimeException
 	 * @return void
 	 */
-	protected function send(Response $response){
+	protected function send(Response $response): void{
 		if (headers_sent()) {
 			throw new \RuntimeException("headers already sent");
 		}
@@ -90,7 +90,7 @@ class Server{
 	 * @throws \Rest\Exception
 	 * @return void
 	 */
-	protected function handleRequest(){
+	protected function handleRequest(): void{
 		foreach ($this->controllers as $controller) {
 			if ($ret = $controller->handleRequest($this->request)) {
 				if ($ret instanceof Response) {
@@ -109,7 +109,7 @@ class Server{
 	 * @param \Rest\Exception $e
 	 * @return void
 	 */
-	protected function handleException(Exception $e){
+	protected function handleException(Exception $e): void{
 		foreach ($this->controllers as $controller) {
 			if ($ret = $controller->handleException($e, $this->request)) {
 				if ($ret instanceof Response) {

@@ -3,6 +3,8 @@
 namespace Rest\Server;
 
 
+use Rest\Response;
+
 class Response extends \Rest\Response{
 	/**
 	 * @access public
@@ -10,7 +12,7 @@ class Response extends \Rest\Response{
 	 * @param array $data
 	 * @return string
 	 */
-	public static function serializeJSON(array $data){
+	public static function serializeJSON(array $data): string{
 		return json_encode($data);
 	}
 	
@@ -19,9 +21,9 @@ class Response extends \Rest\Response{
 	 * @static
 	 * @param array $data
 	 * @param string $rootName
-	 * @return string
+	 * @return string|null
 	 */
-	public static function serializeXML(array $data, $rootName = "response"){
+	public static function serializeXML(array $data, string $rootName = "response"): ?string{
 		$xml = new \SimpleXMLElement("<{$rootName}/>");
 	
 		$serializeXML = function(array $data, \SimpleXMLElement $xml) use (&$serializeXML){
@@ -38,14 +40,14 @@ class Response extends \Rest\Response{
 	
 		$serializeXML($data, $xml);
 	
-		return $xml->asXML();
+		return $xml->asXML() ?? null;
 	}
 	
 	/**
 	 * @access public
 	 * @param string $content
 	 */
-	public function __construct($content = ""){
+	public function __construct(string $content = ""){
 		$this->content = $content;
 		$this->code = 200;
 	
@@ -58,7 +60,7 @@ class Response extends \Rest\Response{
 	 * {@inheritDoc}
 	 * @see \Rest\Response::setContent()
 	 */
-	public function setContent($content){
+	public function setContent(string $content): \Rest\Response{
 		if (is_array($content)) {
 			switch ($this->headers["Content-Type"]) {
 				case self::CONTENT_TYPE_JSON :
@@ -70,6 +72,6 @@ class Response extends \Rest\Response{
 			}
 		}
 		
-		parent::setContent($content);
+		return parent::setContent($content);
 	}
 }

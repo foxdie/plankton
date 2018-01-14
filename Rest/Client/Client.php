@@ -19,7 +19,7 @@ class Client{
 	 * @access public
 	 * @param string $apiEntryPoint
 	 */
-	public function __construct($apiEntryPoint){
+	public function __construct(string $apiEntryPoint){
 		$this->apiEntryPoint = $apiEntryPoint;
 		$this->enableSSL = true;
 	}
@@ -28,9 +28,9 @@ class Client{
 	 * @access public
 	 * @param string $uri
 	 * @param callable $callback
-	 * @return \Rest\Client\Response|false
+	 * @return \Rest\Client\Response|null
 	 */
-	public function get($uri, $callback = NULL){
+	public function get(string $uri, callable $callback = NULL): ?Response{
 		$request = new Request($uri, Request::METHOD_GET);
 		
 		return $this->send($request, $callback);
@@ -39,11 +39,11 @@ class Client{
 	/**
 	 * @access public
 	 * @param string $uri
-	 * @param string $data
+	 * @param array $data
 	 * @param callable $callback
-	 * @return \Rest\Client\Response|false
+	 * @return \Rest\Client\Response|null
 	 */
-	public function post($uri, $data, $callback = NULL){
+	public function post(string $uri, array $data, callable $callback = NULL): ?Response{
 		$request = new Request($uri, Request::METHOD_POST);
 		$request->setData($data);
 		
@@ -53,11 +53,11 @@ class Client{
 	/**
 	 * @access public
 	 * @param string $uri
-	 * @param string $data
+	 * @param array $data
 	 * @param callable $callback
-	 * @return \Rest\Client\Response|false
+	 * @return \Rest\Client\Response|null
 	 */
-	public function put($uri, $data, $callback = NULL){
+	public function put(string $uri, array $data, callable $callback = NULL): ?Response{
 		$request = new Request($uri, Request::METHOD_PUT);
 		$request->setData($data);
 		
@@ -67,11 +67,11 @@ class Client{
 	/**
 	 * @access public
 	 * @param string $uri
-	 * @param string $data
+	 * @param array $data
 	 * @param callable $callback
-	 * @return \Rest\Client\Response|false
+	 * @return \Rest\Client\Response|null
 	 */
-	public function patch($uri, $data, $callback = NULL){
+	public function patch(string $uri, array $data, callable $callback = NULL): ?Response{
 		$request = new Request($uri, Request::METHOD_PATCH);
 		$request->setData($data);
 		
@@ -82,9 +82,9 @@ class Client{
 	 * @access public
 	 * @param string $uri
 	 * @param callable $callback
-	 * @return \Rest\Client\Response|false
+	 * @return \Rest\Client\Response|null
 	 */
-	public function delete($uri, $callback = NULL){
+	public function delete(string $uri, callable $callback = NULL): ?Response{
 		$request = new Request($uri, Request::METHOD_DELETE);
 
 		return $this->send($request, $callback);
@@ -95,9 +95,9 @@ class Client{
 	 * @param Request $request
 	 * @param callable $callback
 	 * @throws \InvalidArgumentException
-	 * @return \Rest\Client\Response|false
+	 * @return \Rest\Client\Response|null
 	 */
-	protected function send(Request $request, $callback = NULL){
+	protected function send(Request $request, callable $callback = NULL): ?Response{
 		$response = $this->curl($request);
 		
 		if (!$callback) {
@@ -113,10 +113,10 @@ class Client{
 	
 	/**
 	 * @access public
-	 * @param string $enableSSL
+	 * @param bool $enableSSL
 	 * @return \Rest\Client
 	 */
-	public function enableSSL($enableSSL = true){
+	public function enableSSL(bool $enableSSL = true): Client{
 		$this->enableSSL = $enableSSL ? true : false;
 		
 		return $this;
@@ -125,9 +125,9 @@ class Client{
 	/**
 	 * @access private
 	 * @param Request $request
-	 * @return \Rest\Client\Response|false
+	 * @return \Rest\Client\Response|null
 	 */
-	private function curl(Request $request){
+	private function curl(Request $request): ?Response{
 		$ch = curl_init($this->apiEntryPoint . $request->getURI());
 
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -158,7 +158,7 @@ class Client{
 		$content = curl_exec($ch);
 		
 		if ($content === false || curl_errno($ch)) {
-			return false;
+			return null;
 		}
 
 		$infos = curl_getinfo($ch);
