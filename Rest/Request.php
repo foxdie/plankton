@@ -91,8 +91,8 @@ class Request{
 	 * @param string $key optional
 	 * return mixed
 	 */
-	public function getData(string $key = false){
-		if ($key === false) {
+	public function getData(string $key = null){
+		if ($key === null) {
 			return $this->data;
 		}
 		
