@@ -3,8 +3,6 @@
 namespace Rest\Server;
 
 
-use Rest\Response;
-
 class Response extends \Rest\Response{
 	/**
 	 * @access public
@@ -60,7 +58,7 @@ class Response extends \Rest\Response{
 	 * {@inheritDoc}
 	 * @see \Rest\Response::setContent()
 	 */
-	public function setContent(string $content): \Rest\Response{
+	public function setContent($content): \Rest\Response{
 		if (is_array($content)) {
 			switch ($this->headers["Content-Type"]) {
 				case self::CONTENT_TYPE_JSON :

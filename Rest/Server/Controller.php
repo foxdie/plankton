@@ -57,9 +57,9 @@ abstract class Controller{
 	/**
 	 * @access public
 	 * @param \Rest\Request $request
-	 * @return bool
+	 * @return Response|bool
 	 */
-	public function handleRequest(Request $request): bool{
+	public function handleRequest(Request $request){
 		foreach ($this->routes as $route) {
 			if ($route->matchRequest($request)) {
 				$args = $this->getPlaceholders($route, $request) ?: [];
