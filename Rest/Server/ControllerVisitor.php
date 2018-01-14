@@ -9,5 +9,5 @@ interface ControllerVisitor{
 	 * @param \Rest\Server\Controller $controller
 	 * @return void
 	 */
-	public function visit(Controller $controller);
+	public function visit(Controller $controller): void;
 }

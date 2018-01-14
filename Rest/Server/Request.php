@@ -9,7 +9,7 @@ class Request extends \Rest\Request{
 	 */
 	public function __construct(){
 		parent::__construct(
-			isset($_SERVER["PATH_INFO"]) ? $_SERVER["PATH_INFO"] : preg_replace("/^(.+)\?.*\$/", "\$1", $_SERVER["REQUEST_URI"]), 
+			$_SERVER["PATH_INFO"] ?? preg_replace("/^(.+)\?.*\$/", "\$1", $_SERVER["REQUEST_URI"]), 
 			$_SERVER["REQUEST_METHOD"]
 		);
 

@@ -22,7 +22,7 @@ final class Route{
 	 * @param string $method
 	 * @return void
 	 */
-	public function __construct($uri, $method = Request::METHOD_GET){
+	public function __construct(string $uri, string $method = Request::METHOD_GET){
 		$this->uri = $uri;
 		$this->method = $method;
 	}
@@ -31,7 +31,7 @@ final class Route{
 	 * @access public
 	 * @return string
 	 */
-	public function getURI(){
+	public function getURI(): string{
 		return $this->uri;
 	}
 	
@@ -39,7 +39,7 @@ final class Route{
 	 * @access public
 	 * @return string
 	 */
-	public function getMethod(){
+	public function getMethod(): string{
 		return $this->method;
 	}
 
@@ -48,7 +48,7 @@ final class Route{
 	 * @param string $uri
 	 * @return \Rest\Server\Route
 	 */
-	public function setURI($uri){
+	public function setURI(string $uri): Route{
 		$this->uri = $uri;
 		
 		return $this;
@@ -59,7 +59,7 @@ final class Route{
 	 * @param string $method
 	 * @return \Rest\Server\Route
 	 */
-	public function setMethod($method){
+	public function setMethod(string $method): Route{
 		$this->method = $method;
 		
 		return $this;
@@ -70,7 +70,7 @@ final class Route{
 	 * @param Request $request
 	 * @return bool
 	 */
-	public function matchRequest(Request $request){
+	public function matchRequest(Request $request): bool{
 		if ($request->getMethod() != $this->getMethod()) {
 			return false;
 		}
@@ -82,7 +82,7 @@ final class Route{
 	 * @access private
 	 * @return string
 	 */
-	private function getRegExp(){
+	private function getRegExp(): string{
 		$uri = preg_replace("/{[^}]+}/", "[^\/]+", $this->uri);
 		
 		return "#^" . $uri . "\$#";
@@ -92,7 +92,8 @@ final class Route{
 	 * @access public
 	 * @return string
 	 */
-	public function __toString(){
+	public function __toString(): string{
 		return "+ {$this->method} {$this->uri}";
 	}
 }
+

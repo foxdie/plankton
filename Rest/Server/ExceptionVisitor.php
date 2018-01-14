@@ -9,7 +9,7 @@ class ExceptionVisitor implements ControllerVisitor{
 	 * {@inheritDoc}
 	 * @see \Rest\Server\ControllerVisitor::visit()
 	 */
-	public function visit(Controller $controller){
+	public function visit(Controller $controller): void{
 		$this->collectExceptionHandlers($controller, new \ReflectionClass($controller));
 	}
 	
@@ -19,7 +19,7 @@ class ExceptionVisitor implements ControllerVisitor{
 	 * @param \ReflectionClass $rc
 	 * @return void
 	 */
-	public function collectExceptionHandlers(Controller $controller, \ReflectionClass $rc){
+	public function collectExceptionHandlers(Controller $controller, \ReflectionClass $rc): void{
 		foreach ($rc->getMethods() as $method) {
 			if ($exception = $this->getHandledExceptionFromMethod($method)) {
 				$controller->addExceptionHandler($exception, [$controller, $method->getName()]);
@@ -30,11 +30,11 @@ class ExceptionVisitor implements ControllerVisitor{
 	/**
 	 * @access private
 	 * @param \ReflectionMethod $method
-	 * @return boolean|string
+	 * @return string|null
 	 */
-	private function getHandledExceptionFromMethod(\ReflectionMethod $method){
+	private function getHandledExceptionFromMethod(\ReflectionMethod $method): ?string{
 		if (!$method->isPublic() || method_exists("Rest\Server\Controller", $method->getName())) {
-			return false;
+			return null;
 		}
 	
 		//annotations
@@ -49,6 +49,6 @@ class ExceptionVisitor implements ControllerVisitor{
 			return trim($matches[1]);
 		}
 	
-		return false;
+		return null;
 	}
 }

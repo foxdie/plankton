@@ -9,7 +9,7 @@ class RouteVisitor implements ControllerVisitor{
 	 * {@inheritDoc}
 	 * @see \Rest\Server\ControllerVisitor::visit()
 	 */
-	public function visit(Controller $controller){
+	public function visit(Controller $controller): void{
 		$this->collectRoutes($controller, new \ReflectionClass($controller));
 	}
 	
@@ -19,7 +19,7 @@ class RouteVisitor implements ControllerVisitor{
 	 * @param \ReflectionClass $rc
 	 * @return void
 	 */
-	public function collectRoutes(Controller $controller, \ReflectionClass $rc){
+	public function collectRoutes(Controller $controller, \ReflectionClass $rc): void{
 		foreach ($rc->getMethods() as $method) {
 			if ($route = $this->getRouteFromMethod($method)) {
 				$controller->addRoute($route, [$controller, $method->getName()]);
@@ -30,11 +30,11 @@ class RouteVisitor implements ControllerVisitor{
 	/**
 	 * @access private
 	 * @param \ReflectionMethod $method
-	 * @return bool|\Rest\Server\Route
+	 * @return \Rest\Server\Route|null
 	 */
-	private function getRouteFromMethod(\ReflectionMethod $method){
+	private function getRouteFromMethod(\ReflectionMethod $method): ?Route{
 		if (!$method->isPublic() || method_exists("Rest\Server\Controller", $method->getName())) {
-			return false;
+			return null;
 		}
 	
 		$uri = false;
@@ -61,6 +61,6 @@ class RouteVisitor implements ControllerVisitor{
 			return $route;
 		}
 	
-		return false;
+		return null;
 	}
 }
