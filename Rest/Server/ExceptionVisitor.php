@@ -37,14 +37,14 @@ class ExceptionVisitor implements ControllerVisitor{
 			return false;
 		}
 	
-		//annotations
+		// annotations
 		$doc = $method->getDocComment();
 	
 		if ($doc && preg_match("/@Exception[space]*\((.+)\)/i", $doc, $matches)) {
 			return trim($matches[1]);
 		}
 	
-		//method
+		// method
 		if (preg_match("/^(.+)Exception\$/i", $method->getName(), $matches)) {
 			return trim($matches[1]);
 		}

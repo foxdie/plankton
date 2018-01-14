@@ -134,14 +134,14 @@ class Client{
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $this->enableSSL);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $this->enableSSL ? 2 : 0);
 		
-		//capture headers
+		// capture headers
 		$headers = [];
 		curl_setopt($ch, CURLOPT_HEADERFUNCTION, function($ch, $str) use (&$headers){
 			$headers[] = $str;
 			return strlen($str);
 		});
 
-		//method
+		// method
 		switch ($request->getMethod()) {
 			case Request::METHOD_DELETE:
 			case Request::METHOD_PATCH:
@@ -154,7 +154,7 @@ class Client{
 				curl_setopt($ch, CURLOPT_POSTFIELDS, $request->getData());
 		}
 		
-		//request
+		// request
 		$content = curl_exec($ch);
 		
 		if ($content === false || curl_errno($ch)) {
@@ -164,13 +164,13 @@ class Client{
 		$infos = curl_getinfo($ch);
 		curl_close($ch);
 		
-		//response
+		// response
 		$response = new Response();
 		$response
 			->setContent($content)
 			->setCode($infos["http_code"]);
 		
-		//set headers
+		// set headers
 		foreach ($headers as $name => $value) {
 			if (preg_match("/^(.+): (.+)\$/", $value, $matches)) {
 				$response->setHeader($matches[1], explode(",", $matches[2]));

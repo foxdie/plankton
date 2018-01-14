@@ -16,13 +16,13 @@ class APIController extends Controller{
 	 * @Method(GET)
 	 */
 	public function listUsers(Request $request): Response{
-		//list users
+		// list users
 		$page = intval($request->getParameter("page")) ?: 1;
 		
 		$user1 = new User(1 + 2 * ($page - 1));
 		$user2 = new User(2 + 2 * ($page - 1));
 		
-		//response
+		// response
 		$response = new Response();
 		$response
 		->setContentType(Response::CONTENT_TYPE_JSON)
@@ -41,11 +41,11 @@ class APIController extends Controller{
 	 * @Method(GET)
 	 */
 	public function getUser(int $id, Request $request): Response{
-		//get user
+		// get user
 		$response = new Response();
 		$user = new User($id);
 		
-		//response
+		// response
 		$response
 			->setContentType(Response::CONTENT_TYPE_JSON)
 			->setCode(200)
@@ -63,11 +63,11 @@ class APIController extends Controller{
 	 * @Method(POST)
 	 */
 	public function createUser(Request $request): Response{
-		//create user
+		// create user
 		$id = 23; 
 		$user = new User($id);
 		
-		//response
+		// response
 		$response = new Response();
 		$response
 			->setCode(201)
@@ -82,11 +82,11 @@ class APIController extends Controller{
 	 * @Method(PUT)
 	 */
 	public function putUser(int $id, Request $request): Response{
-		//update user
+		// update user
 		$user = new User($id);
 		$user->setEmail($request->getData("email"));
 		
-		//response
+		// response
 		$response = new Response();
 		$response
 			->setContentType(Response::CONTENT_TYPE_JSON)
@@ -105,11 +105,11 @@ class APIController extends Controller{
 	 * @Method(PATCH)
 	 */
 	public function patchUser(int $id, Request $request): Response{
-		//patch user
+		// patch user
 		$user = new User($id);
 		$user->setEmail($request->getData("email"));
 		
-		//response
+		// response
 		$response = new Response();
 		$response
 			->setContentType(Response::CONTENT_TYPE_JSON)
@@ -128,10 +128,10 @@ class APIController extends Controller{
 	 * @Method(DELETE)
 	 */
 	public function deleteUser(int $id): Response{
-		//delete user
-		//...
+		// delete user
+		// ...
 	
-		//response
+		// response
 		$response = new Response();
 		$response->setCode(204);
 			
