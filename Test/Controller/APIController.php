@@ -15,7 +15,7 @@ class APIController extends Controller{
 	 * @Route(/user)
 	 * @Method(GET)
 	 */
-	public function listUsers(Request $request){
+	public function listUsers(Request $request): Response{
 		//list users
 		$page = intval($request->getParameter("page")) ?: 1;
 		
@@ -40,7 +40,7 @@ class APIController extends Controller{
 	 * @Route(/user/{id})
 	 * @Method(GET)
 	 */
-	public function getUser($id, Request $request){
+	public function getUser(int $id, Request $request): Response{
 		//get user
 		$response = new Response();
 		$user = new User($id);
@@ -62,7 +62,7 @@ class APIController extends Controller{
 	 * @Route(/user)
 	 * @Method(POST)
 	 */
-	public function createUser(Request $request){
+	public function createUser(Request $request): Response{
 		//create user
 		$id = 23; 
 		$user = new User($id);
@@ -82,7 +82,7 @@ class APIController extends Controller{
 	 * @Route(/user/{id})
 	 * @Method(PUT)
 	 */
-	public function putUser($id, Request $request){
+	public function putUser(int $id, Request $request): Response{
 		//update user
 		$user = new User($id);
 		$user->setEmail($request->getData("email"));
@@ -105,7 +105,7 @@ class APIController extends Controller{
 	 * @Route(/user/{id})
 	 * @Method(PATCH)
 	 */
-	public function patchUser($id, Request $request){
+	public function patchUser(int $id, Request $request): Response{
 		//patch user
 		$user = new User($id);
 		$user->setEmail($request->getData("email"));
@@ -128,7 +128,7 @@ class APIController extends Controller{
 	 * @Route(/user/{id})
 	 * @Method(DELETE)
 	 */
-	public function deleteUser($id){
+	public function deleteUser(int $id): Response{
 		//delete user
 		//...
 	
@@ -145,7 +145,7 @@ class APIController extends Controller{
 	 * @param \Rest\Server\Request $request
 	 * @return \Rest\Server\Response
 	 */
-	public function catchNotFoundException(Exception $e, Request $request) {
+	public function catchNotFoundException(Exception $e, Request $request): Response{
 		$response = new Response();
 		$response
 		->setCode($e->getCode())
@@ -161,7 +161,7 @@ class APIController extends Controller{
 	 * @param \Rest\Server\Request $request
 	 * @return \Rest\Server\Response
 	 */
-	public function catchException(Exception $e, Request $request) {
+	public function catchException(Exception $e, Request $request): Response{
 		$response = new Response();
 		$response
 		->setCode($e->getCode())
