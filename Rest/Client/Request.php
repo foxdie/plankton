@@ -11,8 +11,6 @@ class Request extends \Rest\Request{
 	 */
 	public function __construct(string $uri, string $method = self::METHOD_GET){
 		parent::__construct($uri, $method);
-		
-		$this->data = [];
 	}
 
 	/**

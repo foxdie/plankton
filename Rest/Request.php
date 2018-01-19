@@ -50,7 +50,7 @@ class Request{
 		$this->parameters = [];
 		$this->uri = $this->sanitizeURI($uri);
 		$this->method = $method;
-		$this->data = [];
+		$this->data = NULL;
 	}
 	
 	/**
@@ -96,15 +96,15 @@ class Request{
 			return $this->data;
 		}
 		
-		return $this->data[$key] ?? null;
+		return $this->data[$key] ?? NULL;
 	}
 	
 	/**
 	 * @access public
-	 * @param array $data
+	 * @param mixed $data
 	 * @return \Rest\Request
 	 */
-	public function setData(array $data): Request{
+	public function setData($data): Request{
 		$this->data = $data;
 	
 		return $this;
