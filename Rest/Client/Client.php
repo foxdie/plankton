@@ -147,11 +147,11 @@ class Client{
 			case Request::METHOD_PATCH:
 			case Request::METHOD_PUT:
 				curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $request->getMethod());
-				curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($request->getData()));
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $this->buildQuery($request));
 				break;
 			case Request::METHOD_POST:
 				curl_setopt($ch, CURLOPT_POST, true);
-				curl_setopt($ch, CURLOPT_POSTFIELDS, $request->getData());
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $this->buildQuery($request));
 		}
 		
 		// request
@@ -178,5 +178,18 @@ class Client{
 		}
 			
 		return $response;
+	}
+	
+	/**
+	 * @access private
+	 * @param Request $request
+	 * @return string
+	 */
+	private function buildQuery(Request $request): string{
+		if (is_array($request->getData())) {
+			return http_build_query($request->getData());
+		}
+		
+		return $request->getData();
 	}
 }
