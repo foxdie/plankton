@@ -24,7 +24,7 @@ Full example here: https://github.com/foxdie/rest/blob/master/Test/public/client
 	});
 #### POST example
 	$client->post("/user", ["email" => "foo@bar.com"], function(Response $response){
-		echo $response;
+		echo $response->getLocation();
 	});
 #### PUT example
 	$client->put("/user/1", ["email" => "foo@bar.com"], function(Response $response){
