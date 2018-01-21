@@ -9,11 +9,15 @@ use Rest\Client\Request;
 class Client{
 	/**
 	 * @access protected
-	 * @var string
+	 * @var string $apiEntryPoint
 	 */
 	protected $apiEntryPoint;
 
-	private $enableSSL;
+	/**
+	 * @access protected
+	 * @var bool $enableSSL
+	 */
+	protected $enableSSL;
 	
 	/**
 	 * @access public

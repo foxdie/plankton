@@ -5,7 +5,7 @@ use Rest\Client\Response;
 
 require_once(__DIR__ . "/../bootstrap.php");
 
-$client = new Client("http://rest/api/v1");
+$client = new Client("http://foo:bar@rest/api/v1");
 
 $client->enableSSL(false);
 
