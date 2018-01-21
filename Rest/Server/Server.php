@@ -3,12 +3,10 @@
 namespace Rest\Server;
 
 
-use Rest\Server\Request;
-use Rest\Server\Response;
 use Rest\Exception;
 use Rest\NotFoundException;
 
-class Server{
+class Server implements RequestHandler{
 	/**
 	 * @access protected
 	 * @var Controller[]
@@ -28,11 +26,19 @@ class Server{
 	protected $visitors;
 	
 	/**
+	 * @access protected
+	 * @var Middleware[]
+	 */
+	protected $middlewares;
+	
+	/**
 	 * @access public
 	 * @return void
 	 */
 	public function __construct(){
 		$this->controllers = [];
+		$this->middlewares = [];
+		
 		$this->request = new Request();
 		$this->visitors = [new RouteVisitor(), new ExceptionVisitor()];
 	}
@@ -52,17 +58,49 @@ class Server{
 	}
 
 	/**
+	 * @acces public
+	 * @param Middleware $middleware
+	 * @return Server
+	 */
+	public function addMiddleware(Middleware $middleware): Server{
+		$this->middlewares[] = $middleware;
+		
+		return $this;
+	}
+	
+	/**
 	 * @access public
 	 * @throws \RuntimeException
 	 * @return void
 	 */
 	public function run(): void{		
 		try{
-			$this->handleRequest();
+			$dispatcher = new RequestDispatcher();
+			
+			foreach ($this->middlewares as $middleware) {
+				$dispatcher->pipe($middleware);	
+			}
+			
+			$dispatcher->pipe($this);
+			$this->send($dispatcher->process($this->request));
 		}
 		catch (Exception $e) {
 			$this->handleException($e);
 		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see \Rest\Server\RequestHandler::process()
+	 */
+	public function process(Request $request, RequestDispatcher $dispatcher): Response{
+		foreach ($this->controllers as $controller) {
+			if ($response = $controller->handleRequest($request)) {
+				return $response;
+			}
+		}
+		
+		throw new NotFoundException();
 	}
 	
 	/**
@@ -83,26 +121,6 @@ class Server{
 		}
 		
 		echo $response;
-	}
-	
-	/**
-	 * @access protected
-	 * @throws \Rest\NotFoundException
-	 * @throws \RuntimeException
-	 * @return void
-	 */
-	protected function handleRequest(): void{
-		foreach ($this->controllers as $controller) {
-			if ($ret = $controller->handleRequest($this->request)) {
-				if ($ret instanceof Response) {
-					$this->send($ret);
-				}
-					
-				return;
-			}
-		}
-		
-		throw new NotFoundException();
 	}
 	
 	/**

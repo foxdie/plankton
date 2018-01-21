@@ -163,9 +163,9 @@ class APIController extends Controller{
 	public function catchException(Exception $e, Request $request): Response{
 		$response = new Response();
 		$response
-		->setCode($e->getCode())
-		->setContentType(Response::CONTENT_TYPE_JSON)
-		->setContent(["error" => $e->getMessage()]);
+			->setCode($e->getCode())
+			->setContentType(Response::CONTENT_TYPE_JSON)
+			->setContent(["error" => $e->getMessage()]);
 	
 		return $response;
 	}
