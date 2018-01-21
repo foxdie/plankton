@@ -63,6 +63,11 @@ Full example here : https://github.com/foxdie/rest/blob/master/Test/Controller/A
 		->registerController(new APIController());
 		->run();
 #### Create a middleware
+	use Rest\Server\Request;
+	use Rest\Server\Response;
+	use Rest\Server\Middleware;
+	use Rest\Server\RequestDispatcher;
+	
 	class BasicAuthenticationMiddleware implements Middleware{
 		public function process(Request $request, RequestDispatcher $dispatcher): Response{
 			// ...
