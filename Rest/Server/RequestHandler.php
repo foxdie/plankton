@@ -2,6 +2,8 @@
 
 namespace Rest\Server;
 
+use Rest\Request;
+
 
 interface RequestHandler{
 	/**

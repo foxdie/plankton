@@ -4,11 +4,11 @@ namespace Rest;
 
 
 class Request{
-	const METHOD_GET 		= "GET";
-	const METHOD_POST 		= "POST";
-	const METHOD_PUT 		= "PUT";
-	const METHOD_PATCH 		= "PATCH";
-	const METHOD_DELETE 	= "DELETE";
+	const METHOD_GET 	= "GET";
+	const METHOD_POST 	= "POST";
+	const METHOD_PUT 	= "PUT";
+	const METHOD_PATCH 	= "PATCH";
+	const METHOD_DELETE = "DELETE";
 
 	/**
 	 * @access protected
@@ -32,6 +32,18 @@ class Request{
 	 * @access protected
 	 * @var string
 	 */
+	protected $scheme;
+	
+	/**
+	 * @access protected
+	 * @var string
+	 */
+	protected $host;
+	
+	/**
+	 * @access protected
+	 * @var string
+	 */
 	protected $uri;
 	
 	/**
@@ -42,15 +54,20 @@ class Request{
 	
 	/**
 	 * @access public
-	 * @param string $uri
+	 * @param string $url
 	 * @param string $method
 	 */
-	public function __construct(string $uri, string $method = self::METHOD_GET){
+	public function __construct(string $url, string $method = self::METHOD_GET){
 		$this->headers = [];
-		$this->parameters = [];
-		$this->uri = $this->sanitizeURI($uri);
 		$this->method = $method;
 		$this->data = NULL;
+		
+		$url = parse_url($url);
+		
+		$this->uri = $this->sanitizeURI($url["path"]);
+		$this->scheme = $url["scheme"];
+		$this->host = $url["host"];
+		$this->parameters = isset($url["query"]) ? parse_str($url["query"]) : [];
 	}
 	
 	/**
@@ -80,10 +97,46 @@ class Request{
 	
 	/**
 	 * @access public
+	 * @param string $name
+	 * @param mixed $value
+	 * @return \Rest\Request
+	 */
+	public function setParameter(string $name, $value): Request{
+		$this->parameters[$name] = $value;
+		
+		return $this;
+	}
+	
+	/**
+	 * @access public
+	 * @return string
+	 */
+	public function getURL(): string{
+		return "{$this->scheme}://{$this->host}{$this->uri}";
+	}
+	
+	/**
+	 * @access public
 	 * @return string
 	 */
 	public function getURI(): string{
 		return $this->uri;
+	}
+
+	/**
+	 * @access public
+	 * @return string
+	 */
+	public function getHost(): string{
+		return $this->host;
+	}
+	
+	/**
+	 * @access public
+	 * @return string
+	 */
+	public function getScheme(): string{
+		return $this->scheme;
 	}
 
 	/**
@@ -120,6 +173,18 @@ class Request{
 
 	/**
 	 * @access public
+	 * @param string $key
+	 * @param string $value
+	 * @return \Rest\Request
+	 */
+	public function setHeader(string $key, string $value): Request{
+		$this->headers[$key] = $value;
+	
+		return $this;
+	}
+	
+	/**
+	 * @access public
 	 * @param string $name
 	 * @return string|null
 	 */
@@ -133,6 +198,15 @@ class Request{
 		return null;
 	}
 	
+	/**
+	 * @access public
+	 * @param string $name
+	 * @return bool
+	 */
+	public function hasHeader($name): bool{
+		return $this->getHeader($name) !== null;	
+	}
+
 	/**
 	 * @access protected
 	 * @param string $uri

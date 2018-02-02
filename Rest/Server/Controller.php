@@ -4,7 +4,7 @@ namespace Rest\Server;
 
 
 use Rest\Server\Route;
-use Rest\Server\Request;
+use Rest\Request;
 use Rest\Server\Response;
 use Rest\Exception;
 
@@ -78,10 +78,14 @@ abstract class Controller{
 	/**
 	 * @access public
 	 * @param \Rest\Exception $e
-	 * @param \Rest\Server\Request $request
-	 * @return bool
+	 * @param \Rest\Request $request
+	 * @return mixed
 	 */
-	public function handleException(Exception $e, Request $request): bool{
+	public function handleException(Exception $e, Request $request): ?Response{
+		if (!$this->exceptionHandlers) {
+			return null;
+		}
+		
 		foreach ($this->exceptionHandlers as $exception => $handler) {
 			if (get_class($e) == "Rest\\{$exception}" || $exception == "*") {
 				$handler = $this->exceptionHandlers[$exception];
@@ -91,7 +95,7 @@ abstract class Controller{
 			}
 		}
 	
-		return false;
+		return null;
 	}
 	
 	/**
