@@ -2,7 +2,7 @@
 
 namespace Test\Controller;
 
-use Rest\Server\Response;
+use Rest\Response;
 use Rest\Server\Controller;
 use Test\Entity\User;
 use Rest\Request;
@@ -142,7 +142,7 @@ class APIController extends Controller{
 	 * @Exception(NotFoundException)
 	 * @param \Rest\Exception
 	 * @param \Rest\Request $request
-	 * @return \Rest\Server\Response
+	 * @return \Rest\Response
 	 */
 	public function catchNotFoundException(Exception $e, Request $request): Response{
 		$response = new Response();
@@ -158,7 +158,7 @@ class APIController extends Controller{
 	 * @Exception(*)
 	 * @param \Rest\Exception
 	 * @param \Rest\Request $request
-	 * @return \Rest\Server\Response
+	 * @return \Rest\Response
 	 */
 	public function catchException(Exception $e, Request $request): Response{
 		$response = new Response();

@@ -2,10 +2,11 @@
 
 namespace Rest\Server;
 
-
 use Rest\Exception;
 use Rest\NotFoundException;
 use Rest\Request;
+use Rest\Response;
+
 
 class Server implements RequestHandler{
 	/**
@@ -106,7 +107,7 @@ class Server implements RequestHandler{
 	
 	/**
 	 * @access protected
-	 * @param \Rest\Server\Response $response
+	 * @param \Rest\Response $response
 	 * @throws \RuntimeException
 	 * @return void
 	 */

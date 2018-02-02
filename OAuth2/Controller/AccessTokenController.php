@@ -3,7 +3,7 @@
 namespace OAuth2\Controller;
 
 use Rest\Request;
-use Rest\Server\Response;
+use Rest\Response;
 use Rest\Server\Controller;
 use Rest\Exception;
 

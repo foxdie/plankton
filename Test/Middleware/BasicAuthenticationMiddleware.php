@@ -4,7 +4,7 @@ namespace Test\Middleware;
 
 
 use Rest\Request;
-use Rest\Server\Response;
+use Rest\Response;
 use Rest\Server\Middleware;
 use Rest\Server\RequestDispatcher;
 

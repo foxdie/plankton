@@ -3,6 +3,7 @@
 namespace Rest\Server;
 
 use Rest\Request;
+use Rest\Response;
 
 
 interface RequestHandler{

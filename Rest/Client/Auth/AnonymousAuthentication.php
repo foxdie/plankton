@@ -3,7 +3,7 @@
 namespace Rest\Client\Auth;
 
 use Rest\Request;
-use Rest\Client\Response;
+use Rest\Response;
 
 
 class AnonymousAuthentication extends AuthenticationStrategy{

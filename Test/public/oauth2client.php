@@ -1,7 +1,7 @@
 <?php
 
 use Rest\Client\Client;
-use Rest\Client\Response;
+use Rest\Response;
 
 require_once(__DIR__ . "/../bootstrap.php");
 

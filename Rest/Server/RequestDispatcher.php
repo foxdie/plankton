@@ -2,9 +2,10 @@
 
 namespace Rest\Server;
 
-
 use \SplDoublyLinkedList;
 use Rest\Request;
+use Rest\Response;
+
 
 class RequestDispatcher{
 	/**

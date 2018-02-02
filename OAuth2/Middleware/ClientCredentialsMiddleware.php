@@ -7,7 +7,7 @@ use Rest\RequestDispatcher;
 use OAuth2\Grant\ClientCredentialsGrant;
 use OAuth2\AuthException;
 use Rest\Request;
-use Rest\Server\Response;
+use Rest\Response;
 
 
 class ClientCredentialsMiddleware implements Middleware{

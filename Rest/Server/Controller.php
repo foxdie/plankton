@@ -5,7 +5,7 @@ namespace Rest\Server;
 
 use Rest\Server\Route;
 use Rest\Request;
-use Rest\Server\Response;
+use Rest\Response;
 use Rest\Exception;
 
 abstract class Controller{

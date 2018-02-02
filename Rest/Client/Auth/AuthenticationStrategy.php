@@ -3,7 +3,7 @@
 namespace Rest\Client\Auth;
 
 use Rest\Request;
-use Rest\Client\Response;
+use Rest\Response;
 
 
 abstract class AuthenticationStrategy{
@@ -32,7 +32,7 @@ abstract class AuthenticationStrategy{
 	/**
 	 * @access protected
 	 * @param Request $request
-	 * @return \Rest\Client\Response
+	 * @return \Rest\Response
 	 */
 	protected function curl(Request $request): ?Response{
 		$ch = \curl_init($request->getURL());
