@@ -65,6 +65,17 @@ class BearerToken implements AccessToken{
 	
 	/**
 	 * @access public
+	 * @param string $expiration
+	 * @return BearerToken
+	 */
+	public function setExpiration(string $expiration): BearerToken{
+		$this->expiration = $expiration;
+		
+		return $this;
+	}
+	
+	/**
+	 * @access public
 	 * @return string
 	 */
 	public function getRefreshToken(): ?string{
@@ -73,9 +84,39 @@ class BearerToken implements AccessToken{
 	
 	/**
 	 * @access public
+	 * @param string $token
+	 * @return BearerToken
+	 */
+	public function setRefreshToken(string $token): BearerToken{
+		$this->refreshToken = $token;
+	
+		return $this;
+	}
+	
+	/**
+	 * @access public
 	 * @return string[]
 	 */
 	public function getScopes(): array{
 		return $this->scopes;
+	}
+	
+	/**
+	 * @access public
+	 * @param string $scope
+	 * @return BearerToken
+	 */
+	public function addScope(string $scope): BearerToken{
+		$this->scopes[] = $scope;
+	
+		return $this;
+	}
+	
+	/**
+	 * @access public
+	 * @return string
+	 */
+	public function __toString(): string{
+		return $this->value;
 	}
 }

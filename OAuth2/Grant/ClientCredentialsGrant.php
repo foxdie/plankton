@@ -4,6 +4,8 @@ namespace OAuth2\Grant;
 
 
 class ClientCredentialsGrant implements Grant{
+	const GRANT_TYPE_CLIENT_CREDENTIALS	= "client_credentials";
+	const GRANT_TYPE_REFRESH_TOKEN 		= "refresh_token";
 	const ERROR_INVALID_REQUEST 		= "invalid_request";
 	const ERROR_INVALID_CLIENT 			= "invalid_client";
 	const ERROR_INVALID_GRANT 			= "invalid_grant";

@@ -1,0 +1,118 @@
+/**
+DYN
+    largeur component : 
+*/
+:root {
+    --component-width: 300px; 
+}
+
+sequence{
+	position: relative;
+	display: block;
+	width: 100%;
+	min-width: 100%;
+	background-color: white;
+	font-family: Arial;
+	border: 1px solid white;
+}
+
+components{
+	display: block;
+	margin-top: 20px;
+	width:100%;
+    min-width: 100%; 
+}
+
+component{
+	display: inline-block;
+	position: relative;
+	width: var(--component-width);
+	height: 60px;
+	box-sizing: border-box;
+	text-align: center;
+}
+
+component label{
+	display: inline-block;
+	padding: 0 50px;
+	box-sizing: border-box;
+	border: 1px solid #CCCCCC;
+	border-radius: 4px;
+	height: 60px;
+	line-height: 60px;
+	top: 0;
+	bottom: 0;
+	background-color: #F5F5F5;
+	
+}
+
+lifelines{
+	position: absolute;
+	top: 80px;
+    right: 0; 
+    bottom: 0;
+    left: 0;
+}
+	
+lifeline{
+	position: absolute;
+	box-sizing: border-box;
+    border-right: 1px solid #CCCCCC;
+    width: calc(var(--component-width) / 2);
+    min-width: calc(var(--component-width) / 2);
+    top: 0;
+    left: 0;
+    bottom: 0;
+}
+
+lifeline + lifeline{
+    margin-left: var(--component-width);	
+}
+
+messages{
+	display: block;
+	width: 100%;
+	min-width: 100%;
+	margin-bottom: 20px;
+}
+
+request,
+response{
+	display: block;
+	margin-top: 20px;
+	margin-left: calc(var(--component-width) / 2);
+	width: var(--component-width);
+	max-width: var(--component-width);
+}
+
+request label,
+response label{
+    display: inline-block;
+    width: var(--component-width);
+    min-width: var(--component-width);
+    text-align: center;
+    font-size: 0.8em;
+}
+
+response label{
+    color: grey;	
+}
+
+request arrow{
+	display: block;
+	width: var(--component-width);
+	height: 10px;
+    background: url(./arrow_right.png) no-repeat;	
+    background-size: var(--component-width) 10px;
+}
+
+response arrow{
+    display: block;
+    width: var(--component-width);
+    height: 10px;
+    background: url(./response_left.png) no-repeat;   
+    background-size: cover;
+    background-size: var(--component-width) 10px;
+}
+
+

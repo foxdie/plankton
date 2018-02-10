@@ -6,6 +6,7 @@ use Rest\Response;
 use Rest\Request;
 use Rest\Client\Auth\AuthenticationStrategy;
 use Rest\Client\Auth\AnonymousAuthentication;
+use Rest\Logging\Logger;
 
 
 class Client{
@@ -22,12 +23,19 @@ class Client{
 	protected $strategy;
 	
 	/**
+	 * @access protected
+	 * @var Logger
+	 */
+	protected $logger;
+	
+	/**
 	 * @access public
 	 * @param string $apiEntryPoint
 	 */
 	public function __construct(string $apiEntryPoint, AuthenticationStrategy $strategy = NULL){
 		$this->apiEntryPoint = $apiEntryPoint;
 		$this->strategy = $strategy ?: new AnonymousAuthentication();
+		$this->logger = NULL;
 	}
 	
 	/**
@@ -97,6 +105,36 @@ class Client{
 	}
 	
 	/**
+	 * @access public
+	 * @return Logger
+	 */
+	public function getLogger(): Logger{
+		return $this->logger;
+	}
+	
+	/**
+	 * @access public
+	 * @param Logger $logger
+	 * @return Client
+	 */
+	public function setLogger(Logger $logger): Client{
+		$this->logger = $logger;
+		
+		return $this;
+	}
+	
+	/**
+	 * @access public
+	 * @param bool $enableSSL
+	 * @return \Rest\Client
+	 */
+	public function enableSSL(bool $enableSSL = true): Client{
+		$this->strategy->enableSSL(!!$enableSSL);
+	
+		return $this;
+	}
+	
+	/**
 	 * @access protected
 	 * @param Request $request
 	 * @param callable $callback
@@ -107,6 +145,10 @@ class Client{
 		$response = $this->strategy->send($request);
 		// @todo response may be NULL
 		
+		if ($this->logger) {
+			$this->logger->log($request, $response);	
+		}
+		
 		if (!$callback) {
 			return $response;
 		}
@@ -116,16 +158,5 @@ class Client{
 		}
 		
 		return call_user_func($callback, $response);
-	}
-	
-	/**
-	 * @access public
-	 * @param bool $enableSSL
-	 * @return \Rest\Client
-	 */
-	public function enableSSL(bool $enableSSL = true): Client{
-		$this->strategy->enableSSL(!!$enableSSL);
-		
-		return $this;
 	}
 }

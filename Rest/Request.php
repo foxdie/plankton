@@ -208,6 +208,15 @@ class Request{
 	}
 
 	/**
+	 * @access public
+	 * @param string $name
+	 * @return bool
+	 */
+	public function hasParameter($name): bool{
+		return $this->getParameter($name) !== null;
+	}
+	
+	/**
 	 * @access protected
 	 * @param string $uri
 	 * @return string

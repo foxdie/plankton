@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<requests>
+    <request>
+        <method>PUT</method>
+        <scheme>http</scheme>
+        <host>rest</host>
+        <uri>/user/1</uri>
+        <parameters>
+            <parameter>
+                <name>email</name>
+                <value>foo@bar.com</value>
+            </parameter>
+        </parameters>
+        <headers>
+            <header>
+                <name>Authorization</name>
+                <value>Basic Zm9vOmJhcg==</value>
+            </header>
+        </headers>
+        <response>
+            <code>201</code>
+            <headers>
+                <header>
+                    <name>Cache-Control</name>
+                    <value>no-cache, no-store, must-revalidate</value>
+                </header>
+                <header>
+                    <name>Content-Length</name>
+                    <value>36</value>
+                </header>
+                <header>
+                    <name>Cache-Control</name>
+                    <value>no-cache, no-store, must-revalidate</value>
+                </header>
+                <header>
+                    <name>Content-Type</name>
+                    <value>application/json</value>
+                </header>
+                <header>
+                    <name>Date</name>
+                    <value>Fri, 02 Feb 2018 15:33:52 GMT</value>
+                </header>
+                <header>
+                    <name>Server</name>
+                    <value>Apache/2.4.25 (Debian)</value>
+                </header>
+            </headers>
+            <content><![CDATA[{"id":1,"email":"putme@localhost"}]]></content>
+        </response>
+    </request>
+</requests>
