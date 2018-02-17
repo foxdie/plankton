@@ -24,7 +24,8 @@ class AccessTokenController extends Controller{
 			"scope"			=> ""
 		];
 		
-		$response->setCode(200)
+		$response
+			->setCode(200)
 			->setContent($data)
 			->setHeader("Cache-Control", "no-store")
 			->setHeader("Pragma", "no-cache");		
