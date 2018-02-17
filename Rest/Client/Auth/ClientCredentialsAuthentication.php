@@ -8,7 +8,7 @@ use OAuth2\Grant\ClientCredentialsGrant;
 use OAuth2\Token\BearerToken;
 
 
-class ClientCredentialsAuthentication extends AuthenticationStrategy{
+class ClientCredentialsAuthentication implements AuthenticationStrategy{
 	/**
 	 * @access private
 	 * @var string
@@ -57,10 +57,10 @@ class ClientCredentialsAuthentication extends AuthenticationStrategy{
 	 * {@inheritDoc}
 	 * @see \Rest\Client\Auth\AuthenticationStrategy::send()
 	 */
-	public function send(Request $request): ?Response{
+	public function send(Request $request, callable $requestCallback): ?Response{
 		if (!$request->hasParameter("grant_type")) { // do not loop
 			if (!$this->isAuthorized()) {
-				$response = $this->authorize();
+				$response = $this->authorize($requestCallback);
 				
 				if (!$this->isAuthorized()) {
 					return $response;
@@ -73,7 +73,7 @@ class ClientCredentialsAuthentication extends AuthenticationStrategy{
 			);
 		}
 
-		return $this->curl($request);
+		return $requestCallback($request);
 	}
 	
 	/**
@@ -86,31 +86,34 @@ class ClientCredentialsAuthentication extends AuthenticationStrategy{
 	
 	/**
 	 * @access private
+	 * @param callable $requestCallback
 	 * @return Response
 	 */
-	private function authorize(): ?Response{
+	private function authorize(callable $requestCallback): ?Response{
 		if ($this->accessToken && $this->accessToken->getRefreshToken()) {
-			return $this->refreshAccessToken();
+			return $this->refreshAccessToken($requestCallback);
 		}
 		
-		return $this->requestAccessToken();
+		return $this->requestAccessToken($requestCallback);
 	}
 		
 	/**
 	 * @see https://tools.ietf.org/html/rfc6749#section-4.1.3
 	 * @access private
+	 * @param callable $requestCallback
 	 * @return Response
 	 */
-	private function requestAccessToken(): ?Response{
+	private function requestAccessToken(callable $requestCallback): ?Response{
 		$request = new Request($this->authorizationURL, Request::METHOD_POST);
 		
-		$request
-			->setParameter("grant_type", 	ClientCredentialsGrant::GRANT_TYPE_CLIENT_CREDENTIALS)
-			->setParameter("client_id", 	$this->client_id)
-			->setParameter("client_secret", $this->client_secret)
-			->setHeader("Content-Type", 	"application/x-www-form-urlencoded");
+		$request->setData([
+			"grant_type" 	=> ClientCredentialsGrant::GRANT_TYPE_CLIENT_CREDENTIALS,
+			"client_id"		=> $this->client_id,
+			"client_secret" => $this->client_secret,
+			"Content-Type"	=> "application/x-www-form-urlencoded"
+		]);
 		
-		$response = $this->send($request);
+		$response = $requestCallback($request);
 		
 		$this->validateResponseToken($response);
 			
@@ -119,17 +122,20 @@ class ClientCredentialsAuthentication extends AuthenticationStrategy{
 	
 	/**
 	 * @access private
+	 * @param callable $requestCallback
 	 * @return Response
 	 */
-	private function refreshAccessToken(): ?Response{
+	private function refreshAccessToken(callable $requestCallback): ?Response{
 		$request = new Request($this->authorizationURL, Request::METHOD_POST);
 		
-		$request
-			->setParameter("grant_type", 	ClientCredentialsGrant::GRANT_TYPE_REFRESH_TOKEN)
-			->setParameter("refresh_token", $this->accessToken->getRefreshToken())
-			->setHeader("Content-Type", 	"application/x-www-form-urlencoded");
+		$request->setData([
+			"grant_type" 	=> ClientCredentialsGrant::GRANT_TYPE_REFRESH_TOKEN,
+			"refresh_token" => $this->accessToken->getRefreshToken()
+		]);
 		
-		$response = $this->send($request);
+		$request->setHeader("Content-Type", 	"application/x-www-form-urlencoded");
+		
+		$response = $requestCallback($request);
 		
 		$this->validateResponseToken($response);
 			

@@ -16,10 +16,10 @@ class ClientCredentialsMiddleware implements Middleware{
 	 * @see \Rest\RequestHandler::process()
 	 */
 	public function process(Request $request, RequestDispatcher $dispatcher): Response{
-		switch ($request->getParameter("grant_type")) {
+		switch ($request->getData("grant_type")) {
 			// access token request
 			case ClientCredentialsGrant::GRANT_TYPE_CLIENT_CREDENTIALS:
-				if (!$request->getParameter("client_id") || !$request->getParameter("client_secret")) {
+				if (!$request->getData("client_id") || !$request->getData("client_secret")) {
 					throw new AuthException(ClientCredentialsGrant::ERROR_INVALID_REQUEST, 400);
 				}
 				
@@ -27,7 +27,7 @@ class ClientCredentialsMiddleware implements Middleware{
 				
 			// refresh token request
 			case ClientCredentialsGrant::GRANT_TYPE_REFRESH_TOKEN:
-				if (!$request->getParameter("refresh_token")) {
+				if (!$request->getData("refresh_token")) {
 					throw new AuthException(ClientCredentialsGrant::ERROR_INVALID_REQUEST, 400);
 				}
 				

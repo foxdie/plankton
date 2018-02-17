@@ -6,7 +6,7 @@ use Rest\Request;
 use Rest\Response;
 
 
-class BasicAuthentication extends AuthenticationStrategy{
+class BasicAuthentication implements AuthenticationStrategy{
 	/**
 	 * @access private
 	 * @var string
@@ -32,14 +32,12 @@ class BasicAuthentication extends AuthenticationStrategy{
 	 * {@inheritDoc}
 	 * @see \Rest\Client\Auth\AuthenticationStrategy::send()
 	 */
-	public function send(Request $request): ?Response{
+	public function send(Request $request, callable $requestCallback): ?Response{
 		$request->setHeader(
 			"Authorization", 
 			"Basic " . base64_encode("{$this->user}:{$this->password}")
 		);
 
-		$response = $this->curl($request);
-
-		return $response;
+		return $requestCallback($request);
 	}
 }

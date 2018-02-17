@@ -2,8 +2,8 @@
 
 namespace OAuth2;
 
-
 use Rest\Server\Server;
+
 
 class AuthorizationServer extends Server{
 	public function __construct(){

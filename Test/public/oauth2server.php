@@ -7,7 +7,6 @@ use OAuth2\Controller\AccessTokenController;
 use OAuth2\Grant\ClientCredentialsGrant;
 use OAuth2\Middleware\ClientCredentialsMiddleware;
 
-
 $grant = new ClientCredentialsGrant;
 
 $server = new Server();

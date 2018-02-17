@@ -29,15 +29,22 @@ class Client{
 	protected $logger;
 	
 	/**
+	 * @access protected
+	 * @var bool $enableSSL
+	 */
+	protected $enableSSL;
+	
+	/**
 	 * @access public
 	 * @param string $apiEntryPoint
 	 */
 	public function __construct(string $apiEntryPoint, AuthenticationStrategy $strategy = NULL){
-		$this->apiEntryPoint = $apiEntryPoint;
-		$this->strategy = $strategy ?: new AnonymousAuthentication();
-		$this->logger = NULL;
+		$this->apiEntryPoint 	= $apiEntryPoint;
+		$this->strategy 		= $strategy ?: new AnonymousAuthentication();
+		$this->logger 			= NULL;
+		$this->enableSSL 		= true;
 	}
-	
+
 	/**
 	 * @access public
 	 * @param string $uri
@@ -129,7 +136,7 @@ class Client{
 	 * @return \Rest\Client
 	 */
 	public function enableSSL(bool $enableSSL = true): Client{
-		$this->strategy->enableSSL(!!$enableSSL);
+		$this->enableSSL = !!$enableSSL;
 	
 		return $this;
 	}
@@ -142,7 +149,7 @@ class Client{
 	 * @return \Rest\Response|null
 	 */
 	protected function send(Request $request, callable $callback = NULL): ?Response{
-		$response = $this->strategy->send($request, $this->logger);
+		$response = $this->strategy->send($request, [$this, "curl"]);
 		// @todo response may be NULL
 
 		if (!$callback) {
@@ -154,5 +161,104 @@ class Client{
 		}
 		
 		return call_user_func($callback, $response);
+	}
+	
+	/**
+	 * @access public
+	 * @param Request $request
+	 * @return \Rest\Response
+	 */
+	public function curl(Request $request): ?Response{
+		$ch = \curl_init($request->getURL());
+	
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $this->enableSSL);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $this->enableSSL ? 2 : 0);
+	
+		// send headers
+		if ($request->getHeaders()) {
+			curl_setopt($ch, CURLOPT_HTTPHEADER, $this->buildHeaders($request));
+		}
+	
+		// capture headers
+		$headers = [];
+		curl_setopt($ch, CURLOPT_HEADERFUNCTION, function($ch, $str) use (&$headers){
+			$headers[] = $str;
+			return strlen($str);
+		});
+	
+		// method
+		switch ($request->getMethod()) {
+			case Request::METHOD_DELETE:
+			case Request::METHOD_PATCH:
+			case Request::METHOD_PUT:
+				curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $request->getMethod());
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $this->buildQuery($request));
+				break;
+			case Request::METHOD_POST:
+				curl_setopt($ch, CURLOPT_POST, true);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $this->buildQuery($request));
+		}
+		
+		// request
+		$content = curl_exec($ch);
+
+		if ($content === false || curl_errno($ch)) {
+			if ($this->logger) {
+				$this->logger->log($request, null);
+			}
+			
+			return null;
+		}
+
+		$infos = curl_getinfo($ch);
+		curl_close($ch);
+
+		// response
+		$response = new Response();
+		$response
+			->setContent($content)
+			->setCode($infos["http_code"]);
+
+		// set headers
+		foreach ($headers as $name => $value) {
+			if (preg_match("/^(.+): (.+)\$/", $value, $matches)) {
+				$response->setHeader($matches[1], explode(",", $matches[2]));
+			}
+		}
+		
+		if ($this->logger) {
+			$this->logger->log($request, $response);
+		}
+		
+		return $response;
+	}
+	
+	/**
+	 * @access private
+	 * @param Request $request
+	 * @return string
+	 */
+	private function buildQuery(Request $request): ?string{
+		if (is_array($request->getData())) {
+			return http_build_query($request->getData());
+		}
+	
+		return $request->getData();
+	}
+	
+	/**
+	 * @access private
+	 * @param Request $request
+	 * @return string[]
+	 */
+	private function buildHeaders(Request $request): array{
+		$headers = [];
+		foreach ($request->getHeaders() as $name => $value) {
+			$headers[] = "{$name}: {$value}";
+		}
+	
+		return $headers;
 	}
 }
