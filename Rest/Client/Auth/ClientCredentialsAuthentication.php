@@ -58,19 +58,30 @@ class ClientCredentialsAuthentication extends AuthenticationStrategy{
 	 * @see \Rest\Client\Auth\AuthenticationStrategy::send()
 	 */
 	public function send(Request $request): ?Response{
-		if (!$this->accessToken && !$request->hasParameter("grant_type")) {
-			$response = $this->requestAccessToken();
+		if (!$request->hasParameter("grant_type")) { // do not loop
+			if (!$this->isAuthorized()) {
+				$response = $this->authorize();
+				
+				if (!$this->isAuthorized()) {
+					return $response;
+				}
+			}
+			
+			$request->setHeader(
+				"Authorization",
+				"Bearer " . base64_encode($this->accessToken->getValue())
+			);
 		}
-		
-		// @todo test response or token
-		// @todo if token has expired, refresh token
-		
-		$request->setHeader(
-			"Authorization", 
-			"Bearer " . base64_encode($this->accessToken)
-		);
 
 		return $this->curl($request);
+	}
+	
+	/**
+	 * @access private
+	 * @return bool
+	 */
+	private function isAuthorized(): bool{
+		return $this->accessToken && !$this->accessToken->isExpired();
 	}
 	
 	/**
@@ -84,7 +95,7 @@ class ClientCredentialsAuthentication extends AuthenticationStrategy{
 		
 		return $this->requestAccessToken();
 	}
-	
+		
 	/**
 	 * @see https://tools.ietf.org/html/rfc6749#section-4.1.3
 	 * @access private
@@ -93,10 +104,11 @@ class ClientCredentialsAuthentication extends AuthenticationStrategy{
 	private function requestAccessToken(): ?Response{
 		$request = new Request($this->authorizationURL, Request::METHOD_POST);
 		
-		$request->setParameter("grant_type", ClientCredentialsGrant::GRANT_TYPE_CLIENT_CREDENTIALS)
-			->setParameter("client_id", $this->client_id)
+		$request
+			->setParameter("grant_type", 	ClientCredentialsGrant::GRANT_TYPE_CLIENT_CREDENTIALS)
+			->setParameter("client_id", 	$this->client_id)
 			->setParameter("client_secret", $this->client_secret)
-			->setHeader("Content-Type", "application/x-www-form-urlencoded");
+			->setHeader("Content-Type", 	"application/x-www-form-urlencoded");
 		
 		$response = $this->send($request);
 		
@@ -112,9 +124,10 @@ class ClientCredentialsAuthentication extends AuthenticationStrategy{
 	private function refreshAccessToken(): ?Response{
 		$request = new Request($this->authorizationURL, Request::METHOD_POST);
 		
-		$request->setParameter("grant_type", ClientCredentialsGrant::GRANT_TYPE_REFRESH_TOKEN)
+		$request
+			->setParameter("grant_type", 	ClientCredentialsGrant::GRANT_TYPE_REFRESH_TOKEN)
 			->setParameter("refresh_token", $this->accessToken->getRefreshToken())
-			->setHeader("Content-Type", "application/x-www-form-urlencoded");
+			->setHeader("Content-Type", 	"application/x-www-form-urlencoded");
 		
 		$response = $this->send($request);
 		
@@ -151,7 +164,7 @@ class ClientCredentialsAuthentication extends AuthenticationStrategy{
 		}
 		
 		if (isset($token->scope)) {
-			foreach (implode(",", $token->scope) as $scope) {
+			foreach (implode(" ", $token->scope) as $scope) {
 				$this->accessToken->addScope($scope);
 			}
 		}

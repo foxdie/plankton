@@ -142,13 +142,9 @@ class Client{
 	 * @return \Rest\Response|null
 	 */
 	protected function send(Request $request, callable $callback = NULL): ?Response{
-		$response = $this->strategy->send($request);
+		$response = $this->strategy->send($request, $this->logger);
 		// @todo response may be NULL
-		
-		if ($this->logger) {
-			$this->logger->log($request, $response);	
-		}
-		
+
 		if (!$callback) {
 			return $response;
 		}

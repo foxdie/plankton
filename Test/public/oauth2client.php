@@ -15,11 +15,11 @@ $auth = new ClientCredentialsAuthentication(
 );
 
 $client = new Client("http://rest/api/v2", $auth);
+
 $client
 	->enableSSL(false)
-	->setLogger(new XMLLogger());
-
-$client->get("/user/1", function(Response $response) use ($client){
-	header("Content-type: text/xml");
-	echo $client->getLogger()->getLogs()->asXML();
-});
+	->setLogger(new XMLLogger())
+	->get("/user/1", function(Response $response) use ($client){
+		header("Content-type: text/xml");
+		echo $client->getLogger()->getLogs()->asXML();
+	});

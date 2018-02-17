@@ -34,7 +34,7 @@ class BearerToken implements AccessToken{
 	 */
 	public function __construct(string $value){
 		$this->value 		= $value;
-		$this->expiration 	= 3600 * 24;
+		$this->expiration 	= time() + 3600 * 24;
 		$this->scopes 		= [];
 		$this->refreshToken = "";
 	}
@@ -65,13 +65,21 @@ class BearerToken implements AccessToken{
 	
 	/**
 	 * @access public
-	 * @param string $expiration
+	 * @param int $expiration
 	 * @return BearerToken
 	 */
-	public function setExpiration(string $expiration): BearerToken{
+	public function setExpiration(int $expiration): BearerToken{
 		$this->expiration = $expiration;
 		
 		return $this;
+	}
+	
+	/**
+	 * @access public
+	 * @return bool
+	 */
+	public function isExpired(): bool{
+		return $this->expiration > time();
 	}
 	
 	/**

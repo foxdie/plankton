@@ -38,6 +38,8 @@ class BasicAuthentication extends AuthenticationStrategy{
 			"Basic " . base64_encode("{$this->user}:{$this->password}")
 		);
 
-		return $this->curl($request);
+		$response = $this->curl($request);
+
+		return $response;
 	}
 }

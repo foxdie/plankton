@@ -27,6 +27,12 @@ interface AccessToken{
 	
 	/**
 	 * @access public
+	 * @return bool
+	 */
+	public function isExpired(): bool;
+	
+	/**
+	 * @access public
 	 * @return string
 	 */
 	public function getRefreshToken(): ?string;
