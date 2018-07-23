@@ -18,7 +18,5 @@ $server = new Server();
 
 $server
 	->addMiddleware(new ClientCredentialsMiddleware($provider))	// handle grant and authorize requests
-	->registerController(new AccessTokenController($provider))	// create access token
-	->registerController(new RefreshTokenController())			// refresh access token
 	->registerController(new APIController())
 	->run();

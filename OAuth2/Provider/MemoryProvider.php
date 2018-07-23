@@ -56,15 +56,14 @@ class MemoryProvider implements AccessTokenProvider{
 
 		return $this->clients[$client_id]["access_token"];
 	}
-	
-	
+
 	/**
 	 * {@inheritDoc}
 	 * @see \OAuth2\Provider\AccessTokenProvider::refreshToken()
 	 */
 	public function refreshToken(string $refreshToken): AccessToken{
 		foreach ($this->clients as $client_id => $client) {
-			if ($client["access_token"]->getRefreshToken() === $refreshToken) {
+			if ($client["access_token"]->isExpired() && $client["access_token"]->getRefreshToken() === $refreshToken) {
 				$this->clients[$client_id]["access_token"] = $this->createToken();
 				
 				return $this->clients[$client_id]["access_token"];
@@ -92,6 +91,17 @@ class MemoryProvider implements AccessTokenProvider{
 	
 	/**
 	 * @access private
+	 * @return AccessToken
+	 */
+	private function createToken(): AccessToken{
+		$token = new BearerToken(sha1(uniqid(mt_rand(), true)));
+		$token->setRefreshToken(sha1(uniqid(mt_rand(), true)));
+	
+		return $token;
+	}
+	
+	/**
+	 * @access private
 	 * @return void
 	 */
 	private function restoreClients(): void{
@@ -110,16 +120,5 @@ class MemoryProvider implements AccessTokenProvider{
 		
 		fputs($fp, serialize($this->clients));
 		fclose($fp);
-	}
-	
-	/**
-	 * @access private
-	 * @return AccessToken
-	 */
-	private function createToken(): AccessToken{
-		$token = new BearerToken(sha1(uniqid(mt_rand(), true)));
-		$token->setRefreshToken(sha1(uniqid(mt_rand(), true)));
-		
-		return $token;
-	}
+	}	
 }
