@@ -6,8 +6,7 @@ use Rest\Server\Middleware;
 use Rest\Server\RequestDispatcher;
 use Rest\Request;
 use Rest\Response;
-use Rest\Exception;
-use Oauth2\Provider\AccessTokenProvider;
+use OAuth2\Provider\AccessTokenProvider;
 use OAuth2\Grant\ClientCredentialsGrant;
 use OAuth2\Token\AccessToken;
 

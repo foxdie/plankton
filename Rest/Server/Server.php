@@ -3,7 +3,6 @@
 namespace Rest\Server;
 
 use Rest\Exception;
-use Rest\NotFoundException;
 use Rest\Request;
 use Rest\Response;
 
@@ -102,7 +101,7 @@ class Server implements RequestHandler{
 			}
 		}
 		
-		throw new NotFoundException();
+		throw new Exception("Not Found", 404);
 	}
 	
 	/**

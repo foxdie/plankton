@@ -139,22 +139,6 @@ class APIController extends Controller{
 	}
 	
 	/**
-	 * @Exception(NotFoundException)
-	 * @param \Rest\Exception
-	 * @param \Rest\Request $request
-	 * @return \Rest\Response
-	 */
-	public function catchNotFoundException(Exception $e, Request $request): Response{
-		$response = new Response();
-		$response
-			->setCode($e->getCode())
-			->setContentType(Response::CONTENT_TYPE_JSON)
-			->setContent(["error" => $e->getMessage()]);
-		
-		return $response;
-	}
-	
-	/**
 	 * @Exception(*)
 	 * @param \Rest\Exception
 	 * @param \Rest\Request $request

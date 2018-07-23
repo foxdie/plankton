@@ -24,6 +24,7 @@ class RequestDispatcher{
 	/**
 	 * @access public
 	 * @param Request $request
+	 * @throws RuntimeException
 	 * @return Response
 	 */
 	public function process(Request $request): Response{

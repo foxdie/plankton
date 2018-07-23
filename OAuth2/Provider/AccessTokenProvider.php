@@ -16,10 +16,10 @@ interface AccessTokenProvider{
 	
 	/**
 	 * @access public
-	 * @param string $accessToken
+	 * @param string $refreshToken
 	 * @return AccessToken
 	 */
-	public function refreshToken(string $accessToken): ?AccessToken;
+	public function refreshToken(string $refreshToken): ?AccessToken;
 	
 	/**
 	 * @access public

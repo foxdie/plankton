@@ -17,6 +17,6 @@ $provider->addClient(1228, "56fdd11d6ca0c6960fbaa4d07acb65a881d5d145"); // @todo
 $server = new Server();
 
 $server
-	->addMiddleware(new ClientCredentialsMiddleware($provider))	// handle grant and authorize requests
+	->addMiddleware(new ClientCredentialsMiddleware($provider)) // authentication
 	->registerController(new APIController())
 	->run();

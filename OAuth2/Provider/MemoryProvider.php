@@ -50,7 +50,8 @@ class MemoryProvider implements AccessTokenProvider{
 			return null;
 		}
 		
-		if (!($this->clients[$client_id]["access_token"] instanceof AccessToken)) {
+		if (!($this->clients[$client_id]["access_token"] instanceof AccessToken)
+			|| $this->clients[$client_id]["access_token"]->isExpired()) {
 			$this->clients[$client_id]["access_token"] = $this->createToken();
 		}
 
