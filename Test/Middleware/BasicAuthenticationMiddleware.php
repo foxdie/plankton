@@ -3,15 +3,15 @@
 namespace Test\Middleware;
 
 
-use Rest\Server\Request;
-use Rest\Server\Response;
+use Rest\Request;
+use Rest\Response;
 use Rest\Server\Middleware;
 use Rest\Server\RequestDispatcher;
 
 class BasicAuthenticationMiddleware implements Middleware{
 	/**
 	 * {@inheritDoc}
-	 * @see \Rest\Server\RequestHandler::process()
+	 * @see \Rest\RequestHandler::process()
 	 */
 	public function process(Request $request, RequestDispatcher $dispatcher): Response{
 		if (!$this->isAuthenticated($request)) {
