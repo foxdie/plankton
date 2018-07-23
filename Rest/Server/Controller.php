@@ -4,8 +4,8 @@ namespace Rest\Server;
 
 
 use Rest\Server\Route;
-use Rest\Server\Request;
-use Rest\Server\Response;
+use Rest\Request;
+use Rest\Response;
 use Rest\Exception;
 
 abstract class Controller{
@@ -60,6 +60,10 @@ abstract class Controller{
 	 * @return Response|bool
 	 */
 	public function handleRequest(Request $request){
+		if (!$this->routes) {
+			$this->routes = new \SplObjectStorage();
+		}
+		
 		foreach ($this->routes as $route) {
 			if ($route->matchRequest($request)) {
 				$args = $this->getPlaceholders($route, $request) ?: [];
@@ -72,18 +76,23 @@ abstract class Controller{
 			}
 		}
 		
+		//@todo throw exception?
 		return false;
 	}
 	
 	/**
 	 * @access public
 	 * @param \Rest\Exception $e
-	 * @param \Rest\Server\Request $request
-	 * @return bool
+	 * @param \Rest\Request $request
+	 * @return mixed
 	 */
-	public function handleException(Exception $e, Request $request): bool{
+	public function handleException(Exception $e, Request $request): ?Response{
+		if (!$this->exceptionHandlers) {
+			return null;
+		}
+		
 		foreach ($this->exceptionHandlers as $exception => $handler) {
-			if (get_class($e) == "Rest\\{$exception}" || $exception == "*") {
+			if (get_class($e) == "Rest\\{$exception}" || $exception == "*") { //@todo remove namespace limitation
 				$handler = $this->exceptionHandlers[$exception];
 				$ret = call_user_func_array($handler, [$e, $request]);
 	
@@ -91,7 +100,7 @@ abstract class Controller{
 			}
 		}
 	
-		return false;
+		return null;
 	}
 	
 	/**

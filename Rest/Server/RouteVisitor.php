@@ -3,6 +3,8 @@
 
 namespace Rest\Server;
 
+use Rest\Request;
+
 
 class RouteVisitor implements ControllerVisitor{
 	/**

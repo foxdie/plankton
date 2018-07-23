@@ -1,11 +1,15 @@
 <?php
 
 use Rest\Client\Client;
-use Rest\Client\Response;
+use Rest\Response;
+use Rest\Client\Auth\BasicAuthentication;
 
 require_once(__DIR__ . "/../bootstrap.php");
 
-$client = new Client("http://foo:bar@rest/api/v1");
+$client = new Client(
+	"http://rest/api/v1", 
+	new BasicAuthentication("foo", "bar")
+);
 
 $client->enableSSL(false);
 

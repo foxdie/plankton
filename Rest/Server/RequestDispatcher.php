@@ -2,9 +2,10 @@
 
 namespace Rest\Server;
 
-
 use \SplDoublyLinkedList;
 use Rest\Request;
+use Rest\Response;
+
 
 class RequestDispatcher{
 	/**
@@ -23,6 +24,7 @@ class RequestDispatcher{
 	/**
 	 * @access public
 	 * @param Request $request
+	 * @throws RuntimeException
 	 * @return Response
 	 */
 	public function process(Request $request): Response{

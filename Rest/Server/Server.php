@@ -2,9 +2,10 @@
 
 namespace Rest\Server;
 
-
 use Rest\Exception;
-use Rest\NotFoundException;
+use Rest\Request;
+use Rest\Response;
+
 
 class Server implements RequestHandler{
 	/**
@@ -15,7 +16,7 @@ class Server implements RequestHandler{
 	
 	/**
 	 * @access protected
-	 * @var \Rest\Server\Request
+	 * @var \Rest\Request
 	 */
 	protected $request;
 	
@@ -39,7 +40,7 @@ class Server implements RequestHandler{
 		$this->controllers = [];
 		$this->middlewares = [];
 		
-		$this->request = new Request();
+		$this->request = $this->buildRequest();
 		$this->visitors = [new RouteVisitor(), new ExceptionVisitor()];
 	}
 	
@@ -73,7 +74,7 @@ class Server implements RequestHandler{
 	 * @throws \RuntimeException
 	 * @return void
 	 */
-	public function run(): void{		
+	public function run(): void{	
 		try{
 			$dispatcher = new RequestDispatcher();
 			
@@ -91,7 +92,7 @@ class Server implements RequestHandler{
 	
 	/**
 	 * {@inheritDoc}
-	 * @see \Rest\Server\RequestHandler::process()
+	 * @see \Rest\RequestHandler::process()
 	 */
 	public function process(Request $request, RequestDispatcher $dispatcher): Response{
 		foreach ($this->controllers as $controller) {
@@ -100,12 +101,12 @@ class Server implements RequestHandler{
 			}
 		}
 		
-		throw new NotFoundException();
+		throw new Exception("Not Found", 404);
 	}
 	
 	/**
 	 * @access protected
-	 * @param \Rest\Server\Response $response
+	 * @param \Rest\Response $response
 	 * @throws \RuntimeException
 	 * @return void
 	 */
@@ -125,6 +126,31 @@ class Server implements RequestHandler{
 	
 	/**
 	 * @access protected
+	 * @return \Rest\Request
+	 */
+	protected function buildRequest(): Request{
+		$uri = $_SERVER["PATH_INFO"] ?? preg_replace("/^(.+)\?.*\$/", "\$1", $_SERVER["REQUEST_URI"]);
+		$url = $_SERVER["REQUEST_SCHEME"] . "://" . $_SERVER["HTTP_HOST"] . $uri;
+		
+		$request = new Request($url, $_SERVER["REQUEST_METHOD"]);
+		
+		parse_str(file_get_contents("php://input"), $data);
+		$request->setData($data);
+		
+		parse_str($_SERVER["QUERY_STRING"], $parameters);
+		foreach ($parameters as $name => $value) {
+			$request->setParameter($name, $value);
+		}
+		
+		foreach (getallheaders() as $name => $value) {
+			$request->setHeader($name, $value);
+		}
+		
+		return $request;
+	}
+	
+	/**
+	 * @access protected
 	 * @param \Rest\Exception $e
 	 * @throws \RuntimeException
 	 * @return void
@@ -139,5 +165,14 @@ class Server implements RequestHandler{
 				return;
 			}
 		}
+		
+		// exception is not handled by any controller
+		$response = new Response();
+		
+		$response
+			->setCode($e->getCode())
+			->setContent($e->getMessage());
+	
+		$this->send($response);
 	}
 }

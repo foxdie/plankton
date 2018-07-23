@@ -2,10 +2,10 @@
 
 namespace Test\Controller;
 
-use Rest\Server\Response;
+use Rest\Response;
 use Rest\Server\Controller;
 use Test\Entity\User;
-use Rest\Server\Request;
+use Rest\Request;
 use Rest\Exception;
 
 
@@ -139,26 +139,10 @@ class APIController extends Controller{
 	}
 	
 	/**
-	 * @Exception(NotFoundException)
-	 * @param \Rest\Exception
-	 * @param \Rest\Server\Request $request
-	 * @return \Rest\Server\Response
-	 */
-	public function catchNotFoundException(Exception $e, Request $request): Response{
-		$response = new Response();
-		$response
-			->setCode($e->getCode())
-			->setContentType(Response::CONTENT_TYPE_JSON)
-			->setContent(["error" => $e->getMessage()]);
-		
-		return $response;
-	}
-	
-	/**
 	 * @Exception(*)
 	 * @param \Rest\Exception
-	 * @param \Rest\Server\Request $request
-	 * @return \Rest\Server\Response
+	 * @param \Rest\Request $request
+	 * @return \Rest\Response
 	 */
 	public function catchException(Exception $e, Request $request): Response{
 		$response = new Response();
