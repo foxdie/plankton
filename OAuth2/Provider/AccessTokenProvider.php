@@ -20,4 +20,11 @@ interface AccessTokenProvider{
 	 * @return AccessToken
 	 */
 	public function refreshToken(string $accessToken): ?AccessToken;
+	
+	/**
+	 * @access public
+	 * @param string $token
+	 * @return bool
+	 */
+	public function isValidAccessToken(string $token): bool;
 }

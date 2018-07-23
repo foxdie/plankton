@@ -65,6 +65,10 @@ class XMLLogger implements Logger{
 				$requestHeaderNode->addChild("value", $value);
 			}
 			
+			// request data
+			$data = $request->getData() ?: [];
+			$dataNode = $requestNode->addChild("data", htmlentities(http_build_query($data)));
+	
 			// response
 			$responseNode = $requestNode->addChild("response");
 			

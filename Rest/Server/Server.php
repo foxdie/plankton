@@ -75,7 +75,7 @@ class Server implements RequestHandler{
 	 * @throws \RuntimeException
 	 * @return void
 	 */
-	public function run(): void{		
+	public function run(): void{	
 		try{
 			$dispatcher = new RequestDispatcher();
 			
@@ -166,5 +166,14 @@ class Server implements RequestHandler{
 				return;
 			}
 		}
+		
+		// exception is not handled by any controller
+		$response = new Response();
+		
+		$response
+			->setCode($e->getCode())
+			->setContent($e->getMessage());
+	
+		$this->send($response);
 	}
 }

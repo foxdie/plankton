@@ -79,7 +79,7 @@ class BearerToken implements AccessToken{
 	 * @return bool
 	 */
 	public function isExpired(): bool{
-		return $this->expiration > time();
+		return $this->expiration < time();
 	}
 	
 	/**

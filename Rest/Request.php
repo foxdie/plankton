@@ -154,10 +154,10 @@ class Request{
 	
 	/**
 	 * @access public
-	 * @param mixed $data
+	 * @param array $data
 	 * @return \Rest\Request
 	 */
-	public function setData($data): Request{
+	public function setData(array $data): Request{
 		$this->data = $data;
 	
 		return $this;

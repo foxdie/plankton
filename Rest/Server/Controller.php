@@ -60,6 +60,10 @@ abstract class Controller{
 	 * @return Response|bool
 	 */
 	public function handleRequest(Request $request){
+		if (!$this->routes) {
+			$this->routes = new \SplObjectStorage();
+		}
+		
 		foreach ($this->routes as $route) {
 			if ($route->matchRequest($request)) {
 				$args = $this->getPlaceholders($route, $request) ?: [];
@@ -72,6 +76,7 @@ abstract class Controller{
 			}
 		}
 		
+		//@todo throw exception?
 		return false;
 	}
 	
@@ -87,7 +92,7 @@ abstract class Controller{
 		}
 		
 		foreach ($this->exceptionHandlers as $exception => $handler) {
-			if (get_class($e) == "Rest\\{$exception}" || $exception == "*") {
+			if (get_class($e) == "Rest\\{$exception}" || $exception == "*") { //@todo remove namespace limitation
 				$handler = $this->exceptionHandlers[$exception];
 				$ret = call_user_func_array($handler, [$e, $request]);
 	

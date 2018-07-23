@@ -6,22 +6,48 @@ use Rest\Request;
 use Rest\Response;
 use Rest\Server\Controller;
 use Rest\Exception;
+use OAuth2\Provider\AccessTokenProvider;
+use OAuth2\Grant\ClientCredentialsGrant;
 
 
 class AccessTokenController extends Controller{
 	/**
-	 * @Route(/token)
-	 * @Method(GET)
+	 * @access private
+	 * @var AccessTokenProvider
 	 */
-	public function createAccessToken(Request $request): Response{	
+	private $provider;
+	
+	/**
+	 * @access public
+	 * @param \AccessTokenProvider $provider
+	 */
+	public function __construct(AccessTokenProvider $provider){
+		$this->provider = $provider;
+	}
+	
+	/**
+	 * @Route(/token)
+	 * @Method(POST)
+	 */
+	public function createAccessToken(Request $request): Response{
+		if (!$request->getData("client_id") || !$request->getData("client_secret")) {
+			throw new Exception(ClientCredentialsGrant::ERROR_INVALID_REQUEST, 400);
+		}
+		
+		$token = $this->provider->getAccessToken($request->getData("client_id"), $request->getData("client_secret"));
+		
+		if (!$token) {
+			throw new Exception(ClientCredentialsGrant::ERROR_INVALID_CLIENT, 401);
+		}
+		
 		$response = new Response();
 		
 		$data = [
-			"access_token" 	=> "",
-			"token_type" 	=> "",
-			"expires_in" 	=> "",
-			"refresh_token" => "",
-			"scope"			=> ""
+			"access_token" 	=> base64_encode($token->getValue()),
+			"token_type" 	=> $token->getType(),
+			"expires_in" 	=> $token->getExpiration(),
+			"refresh_token" => base64_encode($token->getRefreshToken()),
+			"scope"			=> $token->getScopes()
 		];
 		
 		$response
@@ -29,19 +55,6 @@ class AccessTokenController extends Controller{
 			->setContent($data)
 			->setHeader("Cache-Control", "no-store")
 			->setHeader("Pragma", "no-cache");		
-		
-		return $response;
-	}
-
-	/**
-	 * @Exception(OAuth2Exception)
-	 */
-	public function catchException(OAuth2Exception $e, Request $request): Response{
-		$response = new Response();
-		$response
-			->setCode($e->getCode())
-			->setContentType(Response::CONTENT_TYPE_JSON)
-			->setContent(["error" => $e->getMessage()]);
 		
 		return $response;
 	}

@@ -162,14 +162,14 @@ class ClientCredentialsAuthentication implements AuthenticationStrategy{
 			return false;
 		}
 		
-		$this->accessToken = new BearerToken($token->access_token);
-		$this->accessToken->setExpiration($token->expires_in);
+		$this->accessToken = new BearerToken(base64_decode($token->access_token));
+		$this->accessToken->setExpiration($token->expires_in ?: 0);
 		
 		if (isset($token->refresh_token)) {
-			$this->accessToken->setRefreshToken($token->refresh_token);
+			$this->accessToken->setRefreshToken(base64_decode($token->refresh_token));
 		}
 		
-		if (isset($token->scope)) {
+		if (isset($token->scope) && $token->scope) {
 			foreach (implode(" ", $token->scope) as $scope) {
 				$this->accessToken->addScope($scope);
 			}
