@@ -1,6 +1,6 @@
 <?php
 
-namespace OAuth2\Grant;
+namespace Rest\OAuth2\Grant;
 
 
 class ClientCredentialsGrant implements Grant{

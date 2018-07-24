@@ -4,8 +4,8 @@ namespace Rest\Client;
 
 use Rest\Response;
 use Rest\Request;
-use Rest\Client\Auth\AuthenticationStrategy;
-use Rest\Client\Auth\AnonymousAuthentication;
+use Rest\Client\Strategy\AuthenticationStrategy;
+use Rest\Client\Strategy\AnonymousAuthentication;
 use Rest\Logging\Logger;
 
 

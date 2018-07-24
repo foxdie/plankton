@@ -1,8 +1,8 @@
 <?php
 
-namespace OAuth2\Provider;
+namespace Rest\OAuth2\Provider;
 
-use OAuth2\Token\AccessToken;
+use Rest\OAuth2\Token\AccessToken;
 
 
 interface AccessTokenProvider{

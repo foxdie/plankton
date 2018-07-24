@@ -1,14 +1,14 @@
 <?php
 
-namespace OAuth2\Middleware;
+namespace Rest\OAuth2\Middleware;
 
 use Rest\Server\Middleware;
 use Rest\Server\RequestDispatcher;
 use Rest\Request;
 use Rest\Response;
-use OAuth2\Provider\AccessTokenProvider;
-use OAuth2\Grant\ClientCredentialsGrant;
-use OAuth2\Token\AccessToken;
+use Rest\OAuth2\Provider\AccessTokenProvider;
+use Rest\OAuth2\Grant\ClientCredentialsGrant;
+use Rest\OAuth2\Token\AccessToken;
 
 
 class ClientCredentialsMiddleware implements Middleware{

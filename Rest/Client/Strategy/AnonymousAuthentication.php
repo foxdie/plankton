@@ -1,6 +1,6 @@
 <?php
 
-namespace Rest\Client\Auth;
+namespace Rest\Client\Strategy;
 
 use Rest\Request;
 use Rest\Response;
@@ -9,7 +9,7 @@ use Rest\Response;
 class AnonymousAuthentication implements AuthenticationStrategy{
 	/**
 	 * {@inheritDoc}
-	 * @see \Rest\Client\Auth\AuthenticationStrategy::send()
+	 * @see \Rest\Client\Strategy\AuthenticationStrategy::send()
 	 */
 	public function send(Request $request, callable $requestCallback): ?Response{
 		return $requestCallback($request);

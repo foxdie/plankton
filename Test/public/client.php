@@ -2,7 +2,7 @@
 
 use Rest\Client\Client;
 use Rest\Response;
-use Rest\Client\Auth\BasicAuthentication;
+use Rest\Client\Strategy\BasicAuthentication;
 
 require_once(__DIR__ . "/../bootstrap.php");
 

@@ -1,11 +1,12 @@
 <?php
 
-namespace Rest\Client\Auth;
+namespace Rest\Client\Strategy;
 
 use Rest\Request;
 use Rest\Response;
-use OAuth2\Grant\ClientCredentialsGrant;
-use OAuth2\Token\BearerToken;
+use Rest\OAuth2\Grant\ClientCredentialsGrant;
+use Rest\OAuth2\Token\BearerToken;
+use Rest\OAuth2\Token\AccessToken;
 
 
 class ClientCredentialsAuthentication implements AuthenticationStrategy{
@@ -23,7 +24,7 @@ class ClientCredentialsAuthentication implements AuthenticationStrategy{
 	
 	/**
 	 * @access private
-	 * @var OAuth2\Token\BearerToken
+	 * @var Rest\OAuth2\Token\BearerToken
 	 */
 	private $accessToken;
 	
@@ -55,7 +56,7 @@ class ClientCredentialsAuthentication implements AuthenticationStrategy{
 	
 	/**
 	 * {@inheritDoc}
-	 * @see \Rest\Client\Auth\AuthenticationStrategy::send()
+	 * @see \Rest\Client\Strategy\AuthenticationStrategy::send()
 	 */
 	public function send(Request $request, callable $requestCallback): ?Response{
 		if (!$request->hasParameter("grant_type")) { // do not loop
@@ -74,6 +75,25 @@ class ClientCredentialsAuthentication implements AuthenticationStrategy{
 		}
 
 		return $requestCallback($request);
+	}
+	
+	/**
+	 * @access public
+	 * @return AccessToken
+	 */
+	public function getAccessToken(): AccessToken{
+		return $this->accessToken;
+	}
+	
+	/**
+	 * @access public
+	 * @param AccessToken $token
+	 * @return ClientCredentialsAuthentication
+	 */
+	public function setAccessToken(AccessToken $token): ClientCredentialsAuthentication{
+		$this->accessToken = $token;
+		
+		return $this;
 	}
 	
 	/**
