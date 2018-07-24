@@ -62,7 +62,7 @@ class MemoryProvider implements AccessTokenProvider{
 	 * {@inheritDoc}
 	 * @see \Rest\OAuth2\Provider\AccessTokenProvider::refreshToken()
 	 */
-	public function refreshToken(string $refreshToken): AccessToken{
+	public function refreshToken(string $refreshToken): ?AccessToken{
 		foreach ($this->clients as $client_id => $client) {
 			if ($client["access_token"]->isExpired() && $client["access_token"]->getRefreshToken() === $refreshToken) {
 				$this->clients[$client_id]["access_token"] = $this->createToken();
