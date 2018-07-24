@@ -1,6 +1,6 @@
 <?php
 
-namespace OAuth2\Token;
+namespace Rest\OAuth2\Token;
 
 
 class BearerToken implements AccessToken{

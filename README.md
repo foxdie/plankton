@@ -11,40 +11,40 @@
 
 composer require foxdie/rest
 
-### Client
-#### Create a client
+## Client
+### Create a client
 	use Rest\Client\Client;
 	use Rest\Client\Response;
 	
 	$client = new Client("http://rest/api/v1");
 Full example here: https://github.com/foxdie/rest/blob/master/Test/public/client.php
-#### GET example
+### GET example
     $client->get("/user", function(Response $response){
 		echo $response;
 	});
-#### POST example
+### POST example
 	$client->post("/user", ["email" => "foo@bar.com"], function(Response $response){
 		echo $response->getLocation();
 	});
-#### PUT example
+### PUT example
 	$client->put("/user/1", ["email" => "foo@bar.com"], function(Response $response){
 		echo $response;
 	});
-#### PATCH example
+### PATCH example
 	$client->patch("/user/1", ["email" => "foo@bar.com"], function(Response $response){
 		echo $response;
 	});
-#### DELETE example
+### DELETE example
 	$client->delete("/user/1", function(Response $response){
 		echo $response;
 	});
-### Server
-#### Create a server
+## Server
+### Create a server
 	use Rest\Server\Server;
 
 	$server = new Server();
 	$server->run();
-#### Create a controller to handle requests
+### Create a controller to handle requests
 	class APIController extends Controller{
 		/**
 		 * @Route(/user/{id})
@@ -55,14 +55,14 @@ Full example here: https://github.com/foxdie/rest/blob/master/Test/public/client
 		}
 	}
 Full example here : https://github.com/foxdie/rest/blob/master/Test/Controller/APIController.php
-#### Register the controller
+### Register the controller
 	use Rest\Server\Server;
 
 	$server = new Server();
 	$server
 		->registerController(new APIController());
 		->run();
-#### Create a middleware
+### Create a middleware
 	use Rest\Server\Request;
 	use Rest\Server\Response;
 	use Rest\Server\Middleware;
@@ -75,7 +75,7 @@ Full example here : https://github.com/foxdie/rest/blob/master/Test/Controller/A
 		}
 	}
 Full example here: https://github.com/foxdie/rest/blob/master/Test/Middleware/BasicAuthenticationMiddleware.php
-#### Register the middleware
+### Register the middleware
 	use Rest\Server\Server;
 
 	$server = new Server();
@@ -83,3 +83,41 @@ Full example here: https://github.com/foxdie/rest/blob/master/Test/Middleware/Ba
 		->addMiddleware(new BasicAuthenticationMiddleware())
 		->registerController(new APIController())
 		->run();
+## OAuth2
+### Client Credentials Grant
+#### Client
+	use Rest\Client\Client;
+	use Rest\Client\Strategy\ClientCredentialsAuthentication;
+	use Rest\Response;
+	
+	$auth = new ClientCredentialsAuthentication(
+		CLIENT_ID, 
+		CLIENT_SECRET,
+		AUTHENTICATION_URL
+	);
+
+	$client = new Client("http://rest/api/v2", $auth);
+	
+	$client->get("/user/1", function(Response $response){
+		// ...
+	});
+Full example here: 	
+https://github.com/foxdie/rest/blob/master/Test/public/oauth2client.php
+#### Server
+	use Rest\Server\Server;
+	use OAuth2\Middleware\ClientCredentialsMiddleware;
+	use OAuth2\Provider\MemoryProvider;
+	use Test\Controller\APIController;
+	
+	// access token provider
+	$provider = new MemoryProvider();
+	$provider->addClient(CLIENT_ID, CLIENT_SECRET);
+	
+	$server = new Server();
+	
+	$server
+		->addMiddleware(new ClientCredentialsMiddleware($provider))
+		->registerController(new APIController())
+		->run();
+Full example here:
+https://github.com/foxdie/rest/blob/master/Test/public/oauth2server.php

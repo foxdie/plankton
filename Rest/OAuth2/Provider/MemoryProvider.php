@@ -1,11 +1,11 @@
 <?php
 
-namespace OAuth2\Provider;
+namespace Rest\OAuth2\Provider;
 
 define("MEMORYPROVIDER_PATH", sys_get_temp_dir() . "/memory_provider_clients.txt");
 
-use OAuth2\Token\AccessToken;
-use OAuth2\Token\BearerToken;
+use Rest\OAuth2\Token\AccessToken;
+use Rest\OAuth2\Token\BearerToken;
 
 
 class MemoryProvider implements AccessTokenProvider{
@@ -25,11 +25,11 @@ class MemoryProvider implements AccessTokenProvider{
 	
 	/**
 	 * @access public
-	 * @param int $client_id
+	 * @param string $client_id
 	 * @param string $client_secret
 	 * @return void
 	 */
-	public function addClient(int $client_id, string $client_secret): void{
+	public function addClient(string $client_id, string $client_secret): void{
 		if (isset($this->clients[$client_id]) && $this->clients[$client_id]["client_secret"] == $client_secret) {
 			return;
 		}
@@ -42,7 +42,7 @@ class MemoryProvider implements AccessTokenProvider{
 	
 	/**
 	 * {@inheritDoc}
-	 * @see \OAuth2\Provider\AccessTokenProvider::getAccessToken()
+	 * @see \Rest\OAuth2\Provider\AccessTokenProvider::getAccessToken()
 	 */
 	public function getAccessToken(string $client_id, string $client_secret): ?AccessToken{
 		if (!isset($this->clients[$client_id])
@@ -60,7 +60,7 @@ class MemoryProvider implements AccessTokenProvider{
 
 	/**
 	 * {@inheritDoc}
-	 * @see \OAuth2\Provider\AccessTokenProvider::refreshToken()
+	 * @see \Rest\OAuth2\Provider\AccessTokenProvider::refreshToken()
 	 */
 	public function refreshToken(string $refreshToken): AccessToken{
 		foreach ($this->clients as $client_id => $client) {
@@ -76,7 +76,7 @@ class MemoryProvider implements AccessTokenProvider{
 	
 	/**
 	 * {@inheritDoc}
-	 * @see \OAuth2\Provider\AccessTokenProvider::isValidAccessToken()
+	 * @see \Rest\OAuth2\Provider\AccessTokenProvider::isValidAccessToken()
 	 */
 	public function isValidAccessToken(string $token): bool{
 		foreach ($this->clients as $client) {

@@ -3,16 +3,13 @@
 require_once(__DIR__ . "/../bootstrap.php");
 
 use Rest\Server\Server;
-use OAuth2\Controller\AccessTokenController;
-use OAuth2\Controller\RefreshTokenController;
-use OAuth2\Grant\ClientCredentialsGrant;
-use OAuth2\Middleware\ClientCredentialsMiddleware;
-use OAuth2\Provider\MemoryProvider;
+use Rest\OAuth2\Middleware\ClientCredentialsMiddleware;
+use Rest\OAuth2\Provider\MemoryProvider;
 use Test\Controller\APIController;
 
 // access token provider
 $provider = new MemoryProvider();
-$provider->addClient(1228, "56fdd11d6ca0c6960fbaa4d07acb65a881d5d145"); // @todo don't force numeric ids (could be login, email, ...)
+$provider->addClient("foo@bar.com", "56fdd11d6ca0c6960fbaa4d07acb65a881d5d145");
 
 $server = new Server();
 

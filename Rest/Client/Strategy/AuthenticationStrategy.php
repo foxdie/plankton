@@ -1,6 +1,6 @@
 <?php
 
-namespace Rest\Client\Auth;
+namespace Rest\Client\Strategy;
 
 use Rest\Request;
 use Rest\Response;

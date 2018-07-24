@@ -52,8 +52,8 @@ class XMLLogger implements Logger{
 			
 			foreach ($request->getParameters() as $name => $value) {
 				$parameterNode = $parametersNode->addChild("parameter");
-				$parameterNode->addChild("name", $name);
-				$parameterNode->addChild("value", $value);
+				$parameterNode["name"] = $name;
+				$parameterNode["value"] = $value;
 			}
 			
 			// request headers
@@ -61,8 +61,8 @@ class XMLLogger implements Logger{
 			
 			foreach ($request->getHeaders() as $name => $value) {
 				$requestHeaderNode = $requestHeadersNode->addChild("header");
-				$requestHeaderNode->addChild("name", $name);
-				$requestHeaderNode->addChild("value", $value);
+				$requestHeaderNode["name"] = $name;
+				$requestHeaderNode["value"] = $value;
 			}
 			
 			// request data
@@ -79,12 +79,13 @@ class XMLLogger implements Logger{
 			
 			foreach ($response->getHeaders() as $name => $value) {
 				$responseHeaderNode = $responseHeadersNode->addChild("header");
-				$responseHeaderNode->addChild("name", $name);
-				$responseHeaderNode->addChild("value", $value);
+				$responseHeaderNode["name"] = $name;
+				$responseHeaderNode["value"] = $value;
 			}
 			
 			//content
-			$responseNode->addChild("content", $response->getContent());
+			$contentNode = $responseNode->addChild("content", $response->getContent());
+			$contentNode["type"] = $response->getContentType();
 		}
 		
 		return $xml;
