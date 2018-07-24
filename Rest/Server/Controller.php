@@ -92,7 +92,7 @@ abstract class Controller{
 		}
 		
 		foreach ($this->exceptionHandlers as $exception => $handler) {
-			if (get_class($e) == "Rest\\{$exception}" || $exception == "*") { //@todo remove namespace limitation
+			if (get_class($e) == $exception || $exception == "*") {
 				$handler = $this->exceptionHandlers[$exception];
 				$ret = call_user_func_array($handler, [$e, $request]);
 	
