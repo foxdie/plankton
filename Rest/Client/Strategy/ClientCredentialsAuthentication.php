@@ -81,7 +81,7 @@ class ClientCredentialsAuthentication implements AuthenticationStrategy{
 	 * @access public
 	 * @return AccessToken
 	 */
-	public function getAccessToken(): AccessToken{
+	public function getAccessToken(): ?AccessToken{
 		return $this->accessToken;
 	}
 	
@@ -150,10 +150,10 @@ class ClientCredentialsAuthentication implements AuthenticationStrategy{
 		
 		$request->setData([
 			"grant_type" 	=> ClientCredentialsGrant::GRANT_TYPE_REFRESH_TOKEN,
-			"refresh_token" => $this->accessToken->getRefreshToken()
+			"refresh_token" => base64_encode($this->accessToken->getRefreshToken())
 		]);
 		
-		$request->setHeader("Content-Type", 	"application/x-www-form-urlencoded");
+		$request->setHeader("Content-Type", "application/x-www-form-urlencoded");
 		
 		$response = $requestCallback($request);
 		

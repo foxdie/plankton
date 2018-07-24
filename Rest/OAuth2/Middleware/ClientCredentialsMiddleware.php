@@ -6,9 +6,11 @@ use Rest\Server\Middleware;
 use Rest\Server\RequestDispatcher;
 use Rest\Request;
 use Rest\Response;
+use Rest\Exception;
 use Rest\OAuth2\Provider\AccessTokenProvider;
 use Rest\OAuth2\Grant\ClientCredentialsGrant;
 use Rest\OAuth2\Token\AccessToken;
+
 
 
 class ClientCredentialsMiddleware implements Middleware{
@@ -52,7 +54,7 @@ class ClientCredentialsMiddleware implements Middleware{
 				
 				// refresh token request
 				case ClientCredentialsGrant::GRANT_TYPE_REFRESH_TOKEN:
-					return $this->processRefreshtRequest($request, $dispatcher);
+					return $this->processRefreshTokenRequest($request, $dispatcher);
 				
 				// bad request
 				default:
@@ -107,7 +109,7 @@ class ClientCredentialsMiddleware implements Middleware{
 	 * @throws Exception
 	 * @return Response
 	 */
-	private function processRefreshsTokenRequest(Request $request, RequestDispatcher $dispatcher): Response{
+	private function processRefreshTokenRequest(Request $request, RequestDispatcher $dispatcher): Response{
 		if (!$request->getData("refresh_token")) {
 			throw new Exception(ClientCredentialsGrant::ERROR_INVALID_REQUEST, 400);
 		}
