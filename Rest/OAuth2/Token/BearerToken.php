@@ -8,7 +8,7 @@ class BearerToken implements AccessToken{
 	 * @access private
 	 * @var string
 	 */
-	private $value;
+	private $accessToken;
 	
 	/**
 	 * @access private
@@ -30,10 +30,10 @@ class BearerToken implements AccessToken{
 	
 	/**
 	 * @access public
-	 * @param string $value
+	 * @param string $accessToken
 	 */
-	public function __construct(string $value){
-		$this->value 		= $value;
+	public function __construct(string $accessToken = ""){
+		$this->accessToken 	= $accessToken;
 		$this->expiration 	= time() + 3600 * 24;
 		$this->scopes 		= [];
 		$this->refreshToken = "";
@@ -44,7 +44,26 @@ class BearerToken implements AccessToken{
 	 * @return string
 	 */
 	public function getValue(): string{
-		return $this->value;
+		return $this->accessToken;
+	}
+	
+	/**
+	 * @access public
+	 * @return string
+	 */
+	public function getAccessToken(): string{
+		return $this->accessToken;
+	}
+	
+	/**
+	 * @access public
+	 * @param string $token
+	 * @return BearerToken
+	 */
+	public function setAccessToken(string $token): BearerToken{
+		$this->accessToken = $token;
+	
+		return $this;
 	}
 	
 	/**
@@ -125,6 +144,6 @@ class BearerToken implements AccessToken{
 	 * @return string
 	 */
 	public function __toString(): string{
-		return $this->value;
+		return $this->accessToken;
 	}
 }
