@@ -13,10 +13,11 @@ composer require foxdie/rest
 
 ## Client
 ### Create a client
-	use Rest\Client\Client;
-	use Rest\Client\Response;
+	define("API_ENDPOINT", ""http://rest/api/v1");
 	
-	$client = new Client("http://rest/api/v1");
+	use Rest\Client\Client;
+		
+	$client = new Client(API_ENDPOINT);
 Full example here: https://github.com/foxdie/rest/blob/master/Test/public/client.php
 ### GET example
     $client->get("/user", function(Response $response){
@@ -38,6 +39,23 @@ Full example here: https://github.com/foxdie/rest/blob/master/Test/public/client
 	$client->delete("/user/1", function(Response $response){
 		echo $response;
 	});
+### Authentication strategy	
+	// anonymous auth
+	$client = new Client(API_ENDPOINT);
+	
+	// basic auth
+	use Rest\Client\Strategy\BasicAuthentication;
+	
+	$client = new Client(API_ENDPOINT, new BasicAuthentication(USER, PASSWORD));
+	
+	// client credentials
+	use Rest\Client\Strategy\ClientCredentialsAuthentication;
+	
+	$client = new Client(API_ENDPOINT, new ClientCredentialsAuthentication(
+		CLIENT_ID, 
+		CLIENT_SECRET,
+		AUTHENTICATION_URL
+	)); 
 ## Server
 ### Create a server
 	use Rest\Server\Server;
@@ -45,6 +63,10 @@ Full example here: https://github.com/foxdie/rest/blob/master/Test/public/client
 	$server = new Server();
 	$server->run();
 ### Create a controller to handle requests
+You must extend the abstract class Rest\Server\Controller
+ 
+	use Rest\Server\Controller;
+	
 	class APIController extends Controller{
 		/**
 		 * @Route(/user/{id})
@@ -54,15 +76,27 @@ Full example here: https://github.com/foxdie/rest/blob/master/Test/public/client
 			// ...
 		}
 	}
+
+The routes will be created automatically according to the annotations @Route and @Method
 Full example here : https://github.com/foxdie/rest/blob/master/Test/Controller/APIController.php
-### Register the controller
+#### @Route annotation
+- accepts regular expresssions
+- accepts placeholders
+
+#### @Method annotation
+- possible values are GET, POST, PUT, PATCH and DELETE
+
+### Register the controllers
 	use Rest\Server\Server;
 
 	$server = new Server();
 	$server
 		->registerController(new APIController());
+		->registerController(...);
 		->run();
 ### Create a middleware
+You must implement the Rest\Server\Middleware interface
+
 	use Rest\Server\Request;
 	use Rest\Server\Response;
 	use Rest\Server\Middleware;
@@ -75,17 +109,23 @@ Full example here : https://github.com/foxdie/rest/blob/master/Test/Controller/A
 		}
 	}
 Full example here: https://github.com/foxdie/rest/blob/master/Test/Middleware/BasicAuthenticationMiddleware.php
-### Register the middleware
+### Register the middlewares
 	use Rest\Server\Server;
 
 	$server = new Server();
 	$server
 		->addMiddleware(new BasicAuthenticationMiddleware())
+		->addMiddleware(...)
 		->registerController(new APIController())
 		->run();
 ## OAuth2
 ### Client Credentials Grant
 #### Client
+	define("API_ENDPOINT", 		"http://rest/api/v2");
+	define("AUTHENTICATION_URL", "http://rest/api/v2/token");
+	define("CLIENT_ID", 			"...");
+	define("CLIENT_SECRET", 		"...");
+	
 	use Rest\Client\Client;
 	use Rest\Client\Strategy\ClientCredentialsAuthentication;
 	use Rest\Response;
@@ -96,7 +136,11 @@ Full example here: https://github.com/foxdie/rest/blob/master/Test/Middleware/Ba
 		AUTHENTICATION_URL
 	);
 
-	$client = new Client("http://rest/api/v2", $auth);
+	$client = new Client(API_ENDPOINT, new ClientCredentialsAuthentication(
+		CLIENT_ID, 
+		CLIENT_SECRET,
+		AUTHENTICATION_URL
+	));
 	
 	$client->get("/user/1", function(Response $response){
 		// ...
@@ -111,10 +155,9 @@ https://github.com/foxdie/rest/blob/master/Test/public/oauth2client.php
 	
 	// access token provider
 	$provider = new MemoryProvider();
-	$provider->addClient(CLIENT_ID, CLIENT_SECRET);
+		->addClient(CLIENT_ID, CLIENT_SECRET);
 	
 	$server = new Server();
-	
 	$server
 		->addMiddleware(new ClientCredentialsMiddleware($provider))
 		->registerController(new APIController())
@@ -123,6 +166,7 @@ Full example here:
 https://github.com/foxdie/rest/blob/master/Test/public/oauth2server.php
 ##### Create your own Access Token Provider
 All you have to do is to implement the AccessTokenProvider interface :
+
 	use Rest\OAuth2\Provider\AccessTokenProvider;
 	use Rest\OAuth2\Token\AccessToken;
 	use Rest\OAuth2\Token\BearerToken;
