@@ -130,12 +130,6 @@ Full example here: https://github.com/foxdie/rest/blob/master/Test/Middleware/Ba
 	use Rest\Client\Strategy\ClientCredentialsAuthentication;
 	use Rest\Response;
 	
-	$auth = new ClientCredentialsAuthentication(
-		CLIENT_ID, 
-		CLIENT_SECRET,
-		AUTHENTICATION_URL
-	);
-
 	$client = new Client(API_ENDPOINT, new ClientCredentialsAuthentication(
 		CLIENT_ID, 
 		CLIENT_SECRET,
