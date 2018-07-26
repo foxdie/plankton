@@ -25,7 +25,7 @@ Full example here: https://github.com/foxdie/rest/blob/master/Test/public/client
     $client->get("/user", function(Response $response){
 		echo $response;
 	});
-####using magic
+#### using magic
 	$response = $client->getUser();
 ### POST example
 	$response = $client->post("/user", ["email" => "foo@bar.com"]);
@@ -33,7 +33,7 @@ Full example here: https://github.com/foxdie/rest/blob/master/Test/public/client
 	$client->post("/user", ["email" => "foo@bar.com"], function(Response $response){
 		echo $response->getLocation();
 	});
-####using magic
+#### using magic
 	$response = $client->postUser(["email" => "foo@bar.com"]);
 	// or
 	$response = $client->user()->post(["email" => "foo@bar.com"]);
@@ -43,7 +43,7 @@ Full example here: https://github.com/foxdie/rest/blob/master/Test/public/client
 	$client->put("/user/1", ["email" => "foo@bar.com"], function(Response $response){
 		echo $response;
 	});
-####using magic
+#### using magic
 	$response = $client->user(1)->put(["email" => "foo@bar.com"]);
 ### PATCH example
 	$response = $client->patch("/user/1", ["email" => "foo@bar.com"]);
@@ -51,7 +51,7 @@ Full example here: https://github.com/foxdie/rest/blob/master/Test/public/client
 	$client->patch("/user/1", ["email" => "foo@bar.com"], function(Response $response){
 		echo $response;
 	});
-####using magic
+#### using magic
 	$response = $client->user(1)->patch(["email" => "foo@bar.com"]);
 ### DELETE example
 	$response = $client->delete("/user/1");
@@ -59,7 +59,7 @@ Full example here: https://github.com/foxdie/rest/blob/master/Test/public/client
 	$client->delete("/user/1", function(Response $response){
 		echo $response;
 	});
-####using magic
+#### using magic
 	$response = $client->deleteUser(1);
 	// or
 	$response = $client->user(1)->delete();
