@@ -270,6 +270,8 @@ class Client{
 	 * @return \Rest\Client\MagicCall
 	 */
 	public function __call(string $name, array $args){
-		return new MagicCall($this, $name, $args);
+		$call = new MagicCall($this);
+		
+		return $call->__call($name, $args);
 	}
 }
