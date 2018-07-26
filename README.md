@@ -20,25 +20,56 @@ composer require foxdie/rest
 	$client = new Client(API_ENDPOINT);
 Full example here: https://github.com/foxdie/rest/blob/master/Test/public/client.php
 ### GET example
+	$response = $client->get("/user");
+#### using callback
     $client->get("/user", function(Response $response){
 		echo $response;
 	});
+####using magic
+	$response = $client->getUser();
 ### POST example
+	$response = $client->post("/user", ["email" => "foo@bar.com"]);
+#### using callback
 	$client->post("/user", ["email" => "foo@bar.com"], function(Response $response){
 		echo $response->getLocation();
 	});
+####using magic
+	$response = $client->postUser(["email" => "foo@bar.com"]);
+	// or
+	$response = $client->user()->post(["email" => "foo@bar.com"]);
 ### PUT example
+	$response = $client->put("/user/1", ["email" => "foo@bar.com"]);
+#### using callback
 	$client->put("/user/1", ["email" => "foo@bar.com"], function(Response $response){
 		echo $response;
 	});
+####using magic
+	$response = $client->user(1)->put(["email" => "foo@bar.com"]);
 ### PATCH example
+	$response = $client->patch("/user/1", ["email" => "foo@bar.com"]);
+#### using callback	
 	$client->patch("/user/1", ["email" => "foo@bar.com"], function(Response $response){
 		echo $response;
 	});
+####using magic
+	$response = $client->user(1)->patch(["email" => "foo@bar.com"]);
 ### DELETE example
+	$response = $client->delete("/user/1");
+#### using callback
 	$client->delete("/user/1", function(Response $response){
 		echo $response;
 	});
+####using magic
+	$response = $client->deleteUser(1);
+	// or
+	$response = $client->user(1)->delete();
+### Magic calls examples
+	$client->getUser()					// GET /user
+	$client->group(1)->getUser() 		// GET /group/1/user
+	$client->group(1)->getUser(2)		// GET /group/1/user/2
+	
+	$client->postUser()				// POST /user
+	$client->group(1)->postUser([]) 	// POST /group/1/user
 ### Authentication strategy	
 	// anonymous auth
 	$client = new Client(API_ENDPOINT);
