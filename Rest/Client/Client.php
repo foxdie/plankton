@@ -261,4 +261,17 @@ class Client{
 	
 		return $headers;
 	}
+	
+	/**
+	 * @access public
+	 * @magic
+	 * @param string $name
+	 * @param array $args
+	 * @return \Rest\Client\MagicCall
+	 */
+	public function __call(string $name, array $args){
+		$call = new MagicCall($this);
+		
+		return $call->__call($name, $args);
+	}
 }
