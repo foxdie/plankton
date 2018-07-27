@@ -2,9 +2,9 @@
 
 require_once(__DIR__ . "/../bootstrap.php");
 
-use Rest\Server\Server;
-use Rest\OAuth2\Middleware\ClientCredentialsMiddleware;
-use Rest\OAuth2\Provider\MemoryProvider;
+use Plankton\Server\Server;
+use Plankton\OAuth2\Middleware\ClientCredentialsMiddleware;
+use Plankton\OAuth2\Provider\MemoryProvider;
 use Test\Controller\APIController;
 
 // access token provider

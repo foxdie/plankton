@@ -1,15 +1,14 @@
 <?php
 
-define("API_ENDPOINT", 			"http://rest/api/v2");
-define("ACCESS_TOKEN_ENDPOINT", "http://rest/api/v2/token");
-
+define("API_ENDPOINT", 			"http://plankton/api/v2");
+define("ACCESS_TOKEN_ENDPOINT", "http://plankton/api/v2/token");
 define("CLIENT_ID", 			"foo@bar.com");
 define("CLIENT_SECRET", 		"56fdd11d6ca0c6960fbaa4d07acb65a881d5d145");
 
-use Rest\Client\Client;
-use Rest\Response;
-use Rest\Client\Strategy\ClientCredentialsAuthentication;
-use Rest\Logging\XMLLogger;
+use Plankton\Client\Client;
+use Plankton\Response;
+use Plankton\Client\Strategy\ClientCredentialsAuthentication;
+use Plankton\Logging\XMLLogger;
 
 require_once(__DIR__ . "/../bootstrap.php");
 
@@ -21,7 +20,7 @@ $auth = new ClientCredentialsAuthentication(
 );
 
 // reuse an issued token
-// $auth->setAccessToken(new Rest\OAuth2\Token\BearerToken(...));
+// $auth->setAccessToken(new Plankton\OAuth2\Token\BearerToken(...));
 
 $client = new Client(API_ENDPOINT, $auth);
 

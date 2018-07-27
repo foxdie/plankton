@@ -1,11 +1,11 @@
 <?php
 
-define("API_ENDPOINT", "http://rest/api/v1");
+define("API_ENDPOINT", "http://plankton/api/v1");
 
-use Rest\Client\Client;
-use Rest\Response;
-use Rest\Client\Strategy\BasicAuthentication;
-use Rest\Logging\SimpleLogger;
+use Plankton\Client\Client;
+use Plankton\Response;
+use Plankton\Client\Strategy\BasicAuthentication;
+use Plankton\Logging\SimpleLogger;
 
 require_once(__DIR__ . "/../bootstrap.php");
 
