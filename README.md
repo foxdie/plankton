@@ -71,15 +71,15 @@ Full example here: https://github.com/foxdie/rest/blob/master/Test/public/client
 	$client->postUser()				// POST /user
 	$client->group(1)->postUser([]) 	// POST /group/1/user
 ### Authentication strategy	
-	// anonymous auth
+#### anonymous auth
 	$client = new Client(API_ENDPOINT);
 	
-	// basic auth
+#### basic auth
 	use Rest\Client\Strategy\BasicAuthentication;
 	
 	$client = new Client(API_ENDPOINT, new BasicAuthentication(USER, PASSWORD));
 	
-	// client credentials
+#### client credentials
 	use Rest\Client\Strategy\ClientCredentialsAuthentication;
 	
 	$client = new Client(API_ENDPOINT, new ClientCredentialsAuthentication(
@@ -87,6 +87,8 @@ Full example here: https://github.com/foxdie/rest/blob/master/Test/public/client
 		CLIENT_SECRET,
 		AUTHENTICATION_URL
 	)); 
+The authorize and access/refresh token requests will be performed automatically
+The 3rd parameter is optionnal, the default value is "/token"
 ## Server
 ### Create a server
 	use Rest\Server\Server;
@@ -114,6 +116,20 @@ Full example here : https://github.com/foxdie/rest/blob/master/Test/Controller/A
 - accepts regular expresssions
 - accepts placeholders
 
+You can add a route prefix to your controller:
+	
+	/**
+	 * @Route(/user)
+	 */
+	class APIController extends Controller{
+		/**
+		 * @Route(/{id})
+		 * @Method(GET)
+		 */
+		public function getUser(int $id, Request $request): Response{
+			// ...
+		}
+	}
 #### @Method annotation
 - possible values are GET, POST, PUT, PATCH and DELETE
 
@@ -125,13 +141,11 @@ Full example here : https://github.com/foxdie/rest/blob/master/Test/Controller/A
 		->registerController(new APIController());
 		->registerController(...);
 		->run();
-### Create a middleware
+### Create a middleware (optionnal)
 You must implement the Rest\Server\Middleware interface
 
-	use Rest\Server\Request;
-	use Rest\Server\Response;
-	use Rest\Server\Middleware;
-	use Rest\Server\RequestDispatcher;
+	use Rest\Server\{Request, Response};
+	use Rest\Server\{Middleware, RequestDispatcher};
 	
 	class BasicAuthenticationMiddleware implements Middleware{
 		public function process(Request $request, RequestDispatcher $dispatcher): Response{
@@ -152,11 +166,6 @@ Full example here: https://github.com/foxdie/rest/blob/master/Test/Middleware/Ba
 ## OAuth2
 ### Client Credentials Grant
 #### Client
-	define("API_ENDPOINT", 		"http://rest/api/v2");
-	define("AUTHENTICATION_URL", "http://rest/api/v2/token");
-	define("CLIENT_ID", 			"...");
-	define("CLIENT_SECRET", 		"...");
-	
 	use Rest\Client\Client;
 	use Rest\Client\Strategy\ClientCredentialsAuthentication;
 	use Rest\Response;
@@ -166,10 +175,7 @@ Full example here: https://github.com/foxdie/rest/blob/master/Test/Middleware/Ba
 		CLIENT_SECRET,
 		AUTHENTICATION_URL
 	));
-	
-	$client->get("/user/1", function(Response $response){
-		// ...
-	});
+
 Full example here: 	
 https://github.com/foxdie/rest/blob/master/Test/public/oauth2client.php
 #### Server
@@ -178,7 +184,7 @@ https://github.com/foxdie/rest/blob/master/Test/public/oauth2client.php
 	use OAuth2\Provider\MemoryProvider;
 	use Test\Controller\APIController;
 	
-	// access token provider
+	// access token provider (we are using a simple memory provider for this example)
 	$provider = new MemoryProvider();
 		->addClient(CLIENT_ID, CLIENT_SECRET);
 	
@@ -190,12 +196,10 @@ https://github.com/foxdie/rest/blob/master/Test/public/oauth2client.php
 Full example here:
 https://github.com/foxdie/rest/blob/master/Test/public/oauth2server.php
 ##### Create your own Access Token Provider
-All you have to do is to implement the AccessTokenProvider interface :
+All you have to do is to implement the AccessTokenProvider interface:
 
 	use Rest\OAuth2\Provider\AccessTokenProvider;
-	use Rest\OAuth2\Token\AccessToken;
-	use Rest\OAuth2\Token\BearerToken;
-
+	use Rest\OAuth2\Token\{AccessToken, BearerToken};
 
 	class PDOProvider implements AccessTokenProvider{
 		public function getAccessToken(string $client_id, string $client_secret): ?AccessToken{
