@@ -8,11 +8,20 @@ use Rest\Request;
 
 class RouteVisitor implements ControllerVisitor{
 	/**
+	 * @access private
+	 * @var string
+	 */
+	private $prefix;
+	
+	/**
 	 * {@inheritDoc}
 	 * @see \Rest\Server\ControllerVisitor::visit()
 	 */
 	public function visit(Controller $controller): void{
-		$this->collectRoutes($controller, new \ReflectionClass($controller));
+		$rc = new \ReflectionClass($controller);
+		
+		$this->prefix = $this->getRoutesPrefix($rc);
+		$this->collectRoutes($controller, $rc);
 	}
 	
 	/**
@@ -27,6 +36,21 @@ class RouteVisitor implements ControllerVisitor{
 				$controller->addRoute($route, [$controller, $method->getName()]);
 			}
 		}
+	}
+	
+	/**
+	 * @access private
+	 * @param \ReflectionClass $rc
+	 * @return string
+	 */
+	private function getRoutesPrefix(\ReflectionClass $rc): string{
+		$doc = $rc->getDocComment();
+		
+		if ($doc && preg_match("/@Route[space]*\((.+)\)/i", $doc, $matches)) {
+			return $matches[1];
+		}
+		
+		return "/";
 	}
 	
 	/**
@@ -46,7 +70,7 @@ class RouteVisitor implements ControllerVisitor{
 		$doc = $method->getDocComment();
 	
 		if ($doc && preg_match("/@Route[space]*\((.+)\)/i", $doc, $matches)) {
-			$route = new Route(trim(str_replace(["'", "\""], "", $matches[1])));
+			$route = new Route($this->sanitizeURI($this->prefix . $matches[1]));
 	
 			if (preg_match("/@method[space]*\(.*(get|post|put|patch|delete).*\)/i", $doc, $matches)) {
 				$route->setMethod(strtoupper(trim(str_replace(["'", "\""], "", $matches[1]))));
@@ -64,5 +88,21 @@ class RouteVisitor implements ControllerVisitor{
 		}
 	
 		return null;
+	}
+	
+	/**
+	 * @access private
+	 * @param string $uri
+	 * @return string
+	 */
+	private function sanitizeURI(string $uri): string{
+		$uri = trim(str_replace(["'", "\""], "", $uri));
+		$uri = str_replace("//", "/", $uri);
+		
+		if (strlen($uri) > 1 && $uri[-1] == "/") {
+			$uri = substr($uri, 0, -1);
+		}
+		
+		return $uri;
 	}
 }
