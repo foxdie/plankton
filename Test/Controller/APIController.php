@@ -2,11 +2,11 @@
 
 namespace Test\Controller;
 
-use Rest\Response;
-use Rest\Server\Controller;
+use Plankton\Response;
+use Plankton\Server\Controller;
 use Test\Entity\User;
-use Rest\Request;
-use Rest\Exception;
+use Plankton\Request;
+use Plankton\Exception;
 
 
 class APIController extends Controller{
@@ -140,9 +140,9 @@ class APIController extends Controller{
 	
 	/**
 	 * @Exception(*)
-	 * @param \Rest\Exception
-	 * @param \Rest\Request $request
-	 * @return \Rest\Response
+	 * @param \Plankton\Exception
+	 * @param \Plankton\Request $request
+	 * @return \Plankton\Response
 	 */
 	public function catchException(Exception $e, Request $request): Response{
 		$response = new Response();

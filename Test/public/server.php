@@ -3,7 +3,7 @@
 require_once(__DIR__ . "/../bootstrap.php");
 
 
-use Rest\Server\Server;
+use Plankton\Server\Server;
 use Test\Controller\APIController;
 use Test\Middleware\BasicAuthenticationMiddleware;
 use Test\Middleware\LogMiddleware;

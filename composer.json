@@ -1,6 +1,6 @@
 {
-    "name": "foxdie/rest",
-    "description": "PHP REST API microframework",
+    "name": "foxdie/plankton",
+    "description": "PHP RESTful API microframework",
     "type": "library",
     "require": {
         "php": ">=7.2.0",
@@ -16,7 +16,7 @@
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
-    	    "Rest\\": "Rest"
+    	    "Plankton\\": "Plankton"
 		}
     }
 }

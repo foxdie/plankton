@@ -3,15 +3,15 @@
 namespace Test\Middleware;
 
 
-use Rest\Request;
-use Rest\Response;
-use Rest\Server\Middleware;
-use Rest\Server\RequestDispatcher;
+use Plankton\Request;
+use Plankton\Response;
+use Plankton\Server\Middleware;
+use Plankton\Server\RequestDispatcher;
 
 class LogMiddleware implements Middleware{
 	/**
 	 * {@inheritDoc}
-	 * @see \Rest\RequestHandler::process()
+	 * @see \Plankton\RequestHandler::process()
 	 */
 	public function process(Request $request, RequestDispatcher $dispatcher): Response{
 		$this->log($request);
