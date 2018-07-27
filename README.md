@@ -11,10 +11,48 @@
 
 composer require foxdie/rest
 
+## Table of content
+- [Client](#client)
+  * [Create a client](#create-a-client)
+  * [GET example](#get-example)
+    + [using callback](#using-callback)
+    + [using magic](#using-magic)
+  * [POST example](#post-example)
+    + [using callback](#using-callback-1)
+    + [using magic](#using-magic-1)
+  * [PUT example](#put-example)
+    + [using callback](#using-callback-2)
+    + [using magic](#using-magic-2)
+  * [PATCH example](#patch-example)
+    + [using callback](#using-callback-3)
+    + [using magic](#using-magic-3)
+  * [DELETE example](#delete-example)
+    + [using callback](#using-callback-4)
+    + [using magic](#using-magic-4)
+  * [Magic calls](#magic-calls)
+    + [Spinal case](#spinal-case)
+    + [Examples](#examples)
+  * [Authentication strategy](#authentication-strategy)
+    + [anonymous auth](#anonymous-auth)
+    + [basic auth](#basic-auth)
+    + [client credentials](#client-credentials)
+- [Server](#server)
+  * [Creating a server](#creating-a-server)
+  * [Creating controllers to handle requests (required)](#creating-controllers-to-handle-requests--required-)
+    + [@Route annotation](#-route-annotation)
+    + [@Method annotation](#-method-annotation)
+    + [@Exception annotation](#-exception-annotation)
+  * [Registering controllers](#registering-controllers)
+  * [Creating middlewares (optionnal)](#creating-middlewares--optionnal-)
+  * [Registering the middlewares](#registering-the-middlewares)
+- [OAuth2](#oauth2)
+  * [Client Credentials Grant](#client-credentials-grant)
+    + [Client](#client-1)
+    + [Server](#server-1)
+      - [Creating your own Access Token Provider](#creating-your-own-access-token-provider)
+
 ## Client
 ### Create a client
-	define("API_ENDPOINT", ""http://rest/api/v1");
-	
 	use Plankton\Client\Client;
 		
 	$client = new Client(API_ENDPOINT);
@@ -63,13 +101,29 @@ Full example here: https://github.com/foxdie/rest/blob/master/Test/public/client
 	$response = $client->deleteUser(1);
 	// or
 	$response = $client->user(1)->delete();
-### Magic calls examples
-	$client->getUser()					// GET /user
-	$client->group(1)->getUser() 		// GET /group/1/user
-	$client->group(1)->getUser(2)		// GET /group/1/user/2
+### Magic calls
+#### Spinal case
+If you want to use magic calls, your routes must use the spinal case
+Example:
+
+	$client->getUserAccount()
+will match the following route:
+
+	GET /user-account
+Camel case and snake case are not supported
+#### Examples
+	$client->getUser();						// GET /user
+	$client->group(1)->getUser(); 			// GET /group/1/user
+	$client->group(1)->getUser(2);			// GET /group/1/user/2
 	
-	$client->postUser()				// POST /user
-	$client->group(1)->postUser([]) 	// POST /group/1/user
+	$client->postUser([])						// POST /user
+	$client->group(1)->postUser([]) 			// POST /group/1/user
+	
+	$client->deleteUser(1);					// DELETE /user/1
+	$client->user(1)->delete();				// DELETE /user/1
+	$client->group(1)->deleteUser(2);		// DELETE /group/1/user/2
+	$client->group(1)->user(2)->delete(); 	// DELETE /group/1/user/2
+	$client->group(1)->user()->delete(2); 	// DELETE /group/1/user/2
 ### Authentication strategy	
 #### anonymous auth
 	$client = new Client(API_ENDPOINT);
@@ -87,15 +141,15 @@ Full example here: https://github.com/foxdie/rest/blob/master/Test/public/client
 		CLIENT_SECRET,
 		AUTHENTICATION_URL
 	)); 
-The authorize and access/refresh token requests will be performed automatically
+The authorize and access/refresh token requests will be performed automatically.
 The 3rd parameter is optionnal, the default value is "/token"
 ## Server
-### Create a server
+### Creating a server
 	use Plankton\Server\Server;
 
 	$server = new Server();
 	$server->run();
-### Create a controller to handle requests
+### Creating controllers to handle requests (required)
 You must extend the abstract class Plankton\Server\Controller
  
 	use Plankton\Server\Controller;
@@ -110,11 +164,12 @@ You must extend the abstract class Plankton\Server\Controller
 		}
 	}
 
-The routes will be created automatically according to the annotations @Route and @Method
+The routes will be created automatically according to the annotations @Route and @Method.
 Full example here : https://github.com/foxdie/rest/blob/master/Test/Controller/APIController.php
 #### @Route annotation
 - accepts regular expresssions
-- accepts placeholders
+- accepts placeholders: they will be passed as argument in the same order as they appear
+- the spinal case is strongly recommended
 
 You can add a route prefix to your controller:
 	
@@ -131,9 +186,30 @@ You can add a route prefix to your controller:
 		}
 	}
 #### @Method annotation
-- possible values are GET, POST, PUT, PATCH and DELETE
+Possible values are:
+- GET
+- POST
+- PUT
+- PATCH
+- DELETE
 
-### Register the controllers
+#### @Exception annotation
+	class APIController extends Controller{
+		/**
+		 * This will catch any \CustomNameSpace\CustomException
+		 * @Exception(CustomNameSpace\CustomException)
+		 */
+		public function catchCustomException(Exception $e, Request $request): Response{
+		}
+		
+		/**
+		 * This will catch all other exceptions
+		 * @Exception(*)
+		 */
+		public function catchException(Exception $e, Request $request): Response{
+		}
+	}
+### Registering controllers
 	use Plankton\Server\Server;
 
 	$server = new Server();
@@ -141,7 +217,7 @@ You can add a route prefix to your controller:
 		->registerController(new APIController());
 		->registerController(...);
 		->run();
-### Create a middleware (optionnal)
+### Creating middlewares (optionnal)
 You must implement the Plankton\Server\Middleware interface
 
 	use Plankton\Server\{Request, Response};
@@ -154,7 +230,7 @@ You must implement the Plankton\Server\Middleware interface
 		}
 	}
 Full example here: https://github.com/foxdie/rest/blob/master/Test/Middleware/BasicAuthenticationMiddleware.php
-### Register the middlewares
+### Registering the middlewares
 	use Plankton\Server\Server;
 
 	$server = new Server();
@@ -186,7 +262,7 @@ https://github.com/foxdie/rest/blob/master/Test/public/oauth2client.php
 	
 	// access token provider (we are using a simple memory provider for this example)
 	$provider = new MemoryProvider();
-		->addClient(CLIENT_ID, CLIENT_SECRET);
+	$provider->addClient(CLIENT_ID, CLIENT_SECRET);
 	
 	$server = new Server();
 	$server
@@ -195,7 +271,7 @@ https://github.com/foxdie/rest/blob/master/Test/public/oauth2client.php
 		->run();
 Full example here:
 https://github.com/foxdie/rest/blob/master/Test/public/oauth2server.php
-##### Create your own Access Token Provider
+##### Creating your own Access Token Provider
 All you have to do is to implement the AccessTokenProvider interface:
 
 	use Plankton\OAuth2\Provider\AccessTokenProvider;
