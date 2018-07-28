@@ -1,12 +1,12 @@
 <?php
 
-require_once(__DIR__ . "/../bootstrap.php");
-
+require_once(__DIR__ . "/../../vendor/autoload.php");
 
 use Plankton\Server\Server;
 use Test\Controller\APIController;
 use Test\Middleware\BasicAuthenticationMiddleware;
 use Test\Middleware\LogMiddleware;
+
 
 $server = new Server();
 

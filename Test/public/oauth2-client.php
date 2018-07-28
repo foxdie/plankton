@@ -1,16 +1,17 @@
 <?php
 
-define("API_ENDPOINT", 			"http://plankton/api/v2");
+define("API_ENDPOINT", 			$_SERVER["REQUEST_SCHEME"] . "://" . $_SERVER["HTTP_HOST"] . "/api/v2");
 define("ACCESS_TOKEN_ENDPOINT", "http://plankton/api/v2/token");
 define("CLIENT_ID", 			"foo@bar.com");
 define("CLIENT_SECRET", 		"56fdd11d6ca0c6960fbaa4d07acb65a881d5d145");
+
+require_once(__DIR__ . "/../../vendor/autoload.php");
 
 use Plankton\Client\Client;
 use Plankton\Response;
 use Plankton\Client\Strategy\ClientCredentialsAuthentication;
 use Plankton\Logging\XMLLogger;
 
-require_once(__DIR__ . "/../bootstrap.php");
 
 // authentication, access/refresh token requests will be performed automatically by the client
 $auth = new ClientCredentialsAuthentication(

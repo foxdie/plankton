@@ -1,11 +1,12 @@
 <?php
 
-require_once(__DIR__ . "/../bootstrap.php");
+require_once(__DIR__ . "/../../vendor/autoload.php");
 
 use Plankton\Server\Server;
 use Plankton\OAuth2\Middleware\ClientCredentialsMiddleware;
 use Plankton\OAuth2\Provider\MemoryProvider;
 use Test\Controller\APIController;
+
 
 // access token provider
 $provider = new MemoryProvider();

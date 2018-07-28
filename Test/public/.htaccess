@@ -2,8 +2,12 @@ RewriteEngine On
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^api/v1/(.+) server.php/$1 [L,QSA]
+RewriteRule ^api/v1/(.+) simple-server.php/$1 [L,QSA]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^api/v2/(.+) oauth2server.php/$1 [L,QSA]
+RewriteRule ^api/v2/(.+) oauth2-server.php/$1 [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^api/v3/(.+) config-server.php/$1 [L,QSA]
