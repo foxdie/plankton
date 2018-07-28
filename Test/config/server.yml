@@ -11,3 +11,19 @@ routes:
         path: /user/{id}
         method: GET
         controller: Test\Controller\APIController::getUser
+    put_user:
+        path: /user/{id}
+        method: PUT
+        controller: Test\Controller\APIController::putUser
+    patch_user:
+        path: /user/{id}
+        method: PATCH
+        controller: Test\Controller\APIController::patchUser
+    delete_user:
+        path: /user/{id}
+        method: DELETE
+        controller: Test\Controller\APIController::deleteUser
+exceptions:
+    all:
+        exception: "*"
+        controller: Test\Controller\APIController::catchException
