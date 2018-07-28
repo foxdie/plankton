@@ -1,19 +1,19 @@
 <?php
 
-define("API_ENDPOINT", "http://plankton/api/v1");
+define("API_ENDPOINT", $_SERVER["REQUEST_SCHEME"] . "://" . $_SERVER["HTTP_HOST"] . "/api/v1");
+
+require_once(__DIR__ . "/../../vendor/autoload.php");
 
 use Plankton\Client\Client;
 use Plankton\Response;
 use Plankton\Client\Strategy\BasicAuthentication;
 use Plankton\Logging\SimpleLogger;
 
-require_once(__DIR__ . "/../bootstrap.php");
 
 $client = new Client(API_ENDPOINT, new BasicAuthentication("foo", "bar"));
 $client
 	->enableSSL(false)
 	->setLogger(new SimpleLogger());
-	
 
 // GET example
 $response = $client->get("/user");
