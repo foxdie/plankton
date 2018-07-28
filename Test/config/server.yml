@@ -1,0 +1,13 @@
+routes:
+    get_users:
+        path: /user
+        method: GET
+        controller: Test\Controller\APIController::listUsers
+    create_user:
+        path: /user
+        method: POST
+        controller: Test\Controller\APIController::createUser
+    get_user:
+        path: /user/{id}
+        method: GET
+        controller: Test\Controller\APIController::getUser

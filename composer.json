@@ -4,7 +4,8 @@
     "type": "library",
     "require": {
         "php": ">=7.2.0",
-        "ext-curl": "*"
+        "ext-curl": "*",
+        "symfony/yaml": "^4.2@dev"
     },
     "license": "MIT",
     "authors": [

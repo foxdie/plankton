@@ -33,12 +33,19 @@ class Server implements RequestHandler{
 	protected $middlewares;
 	
 	/**
+	 * @access protected
+	 * @var Config
+	 */
+	protected $config;
+	
+	/**
 	 * @access public
 	 * @return void
 	 */
-	public function __construct(){
+	public function __construct(Config $config = null){
 		$this->controllers = [];
 		$this->middlewares = [];
+		$this->config = $config;
 		
 		$this->request = $this->buildRequest();
 		$this->visitors = [new RouteVisitor(), new ExceptionVisitor()];
@@ -74,7 +81,9 @@ class Server implements RequestHandler{
 	 * @throws \RuntimeException
 	 * @return void
 	 */
-	public function run(): void{	
+	public function run(): void{
+		$this->configure();
+		
 		try{
 			$dispatcher = new RequestDispatcher();
 			
@@ -174,5 +183,19 @@ class Server implements RequestHandler{
 			->setContent($e->getMessage());
 	
 		$this->send($response);
+	}
+	
+	protected function configure(){
+		if (!$this->config) {
+			return;
+		}
+	
+		foreach ($this->config->getControllers() as $controller) {
+			$this->registerController($controller);
+		}
+		
+		foreach ($this->controllers as $controller) {
+			$this->config->applyTo($controller);
+		}
 	}
 }

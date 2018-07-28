@@ -3,7 +3,6 @@
 namespace Plankton\Logging;
 
 use \SplObjectStorage;
-use \SimpleXMLElement;
 use Plankton\Request;
 use Plankton\Response;
 
@@ -33,7 +32,7 @@ class SimpleLogger implements Logger{
 
 	/**
 	 * @access public
-	 * @return SimpleXMLElement
+	 * @return SplObjectStorage
 	 */
 	public function getLogs(): SplObjectStorage{
 		return $this->logs;
