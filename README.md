@@ -12,44 +12,6 @@
 composer require foxdie/rest
 
 ## Table of content
-- [Client](#client)
-  * [Create a client](#create-a-client)
-  * [GET example](#get-example)
-    + [using callback](#using-callback)
-    + [using magic](#using-magic)
-  * [POST example](#post-example)
-    + [using callback](#using-callback-1)
-    + [using magic](#using-magic-1)
-  * [PUT example](#put-example)
-    + [using callback](#using-callback-2)
-    + [using magic](#using-magic-2)
-  * [PATCH example](#patch-example)
-    + [using callback](#using-callback-3)
-    + [using magic](#using-magic-3)
-  * [DELETE example](#delete-example)
-    + [using callback](#using-callback-4)
-    + [using magic](#using-magic-4)
-  * [Magic calls](#magic-calls)
-    + [Spinal case](#spinal-case)
-    + [Examples](#examples)
-  * [Authentication strategy](#authentication-strategy)
-    + [anonymous auth](#anonymous-auth)
-    + [basic auth](#basic-auth)
-    + [client credentials](#client-credentials)
-- [Server](#server)
-  * [Creating a server](#creating-a-server)
-  * [Creating controllers to handle requests (required)](#creating-controllers-to-handle-requests--required-)
-    + [@Route annotation](#-route-annotation)
-    + [@Method annotation](#-method-annotation)
-    + [@Exception annotation](#-exception-annotation)
-  * [Registering controllers](#registering-controllers)
-  * [Creating middlewares (optionnal)](#creating-middlewares--optionnal-)
-  * [Registering the middlewares](#registering-the-middlewares)
-- [OAuth2](#oauth2)
-  * [Client Credentials Grant](#client-credentials-grant)
-    + [Client](#client-1)
-    + [Server](#server-1)
-      - [Creating your own Access Token Provider](#creating-your-own-access-token-provider)
 
 ## Client
 ### Create a client
@@ -149,9 +111,42 @@ The 3rd parameter is optionnal, the default value is "/token"
 
 	$server = new Server();
 	$server->run();
-### Creating controllers to handle requests (required)
-You must extend the abstract class Plankton\Server\Controller
- 
+### Handling requests
+You must create a controller which extend the abstract class Plankton\Server\Controller
+	
+	use Plankton\Server\Controller;
+	
+	class APIController extends Controller{
+	}
+	
+Your controller will contain one public method for each route of your API.
+You can create routes in 2 different ways:
+- using a config file
+- using annotations
+
+#### Using a config file
+The routes are described in a YAML file
+##### Example of config file
+	routes:
+	    get_users:
+	        path: /user
+	        method: GET
+	        controller: Test\Controller\APIController::listUsers
+	    create_user:
+	        path: /user
+	        method: POST
+	        controller: Test\Controller\APIController::createUser
+	        
+Full example here: https://github.com/foxdie/plankton/blob/master/Test/config/server.yml
+
+##### Configure the server 
+	use Plankton\Server\{Server, Config};
+	
+	$server = new Server(new Config(CONFIG_PATH));
+	$server->run();
+
+Full example here: https://github.com/foxdie/plankton/blob/master/Test/public/config-server.php       
+#### Using annotations
 	use Plankton\Server\Controller;
 	
 	class APIController extends Controller{
@@ -166,7 +161,7 @@ You must extend the abstract class Plankton\Server\Controller
 
 The routes will be created automatically according to the annotations @Route and @Method.
 Full example here : https://github.com/foxdie/rest/blob/master/Test/Controller/APIController.php
-#### @Route annotation
+##### @Route annotation
 - accepts regular expresssions
 - accepts placeholders: they will be passed as argument in the same order as they appear
 - the spinal case is strongly recommended
@@ -185,7 +180,7 @@ You can add a route prefix to your controller:
 			// ...
 		}
 	}
-#### @Method annotation
+##### @Method annotation
 Possible values are:
 - GET
 - POST
@@ -193,7 +188,7 @@ Possible values are:
 - PATCH
 - DELETE
 
-#### @Exception annotation
+##### @Exception annotation
 	class APIController extends Controller{
 		/**
 		 * This will catch any \CustomNameSpace\CustomException
@@ -218,7 +213,8 @@ Possible values are:
 		->registerController(...);
 		->run();
 ### Creating middlewares (optionnal)
-You must implement the Plankton\Server\Middleware interface
+You must implement the Plankton\Server\Middleware interface.
+The middlewares can handle both incoming requests and outgoing responses.
 
 	use Plankton\Server\{Request, Response};
 	use Plankton\Server\{Middleware, RequestDispatcher};
