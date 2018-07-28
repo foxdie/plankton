@@ -20,15 +20,7 @@ composer require foxdie/rest
   * [POST example](#post-example)
     + [using callback](#using-callback-1)
     + [using magic](#using-magic-1)
-  * [PUT example](#put-example)
-    + [using callback](#using-callback-2)
-    + [using magic](#using-magic-2)
-  * [PATCH example](#patch-example)
-    + [using callback](#using-callback-3)
-    + [using magic](#using-magic-3)
-  * [DELETE example](#delete-example)
-    + [using callback](#using-callback-4)
-    + [using magic](#using-magic-4)
+  * [PUT, PATCH and DELETE examples](#put--patch-and-delete-examples)
   * [Magic calls](#magic-calls)
     + [Spinal case](#spinal-case)
     + [Examples](#examples)
@@ -77,34 +69,9 @@ Full example here: https://github.com/foxdie/rest/blob/master/Test/public/client
 	});
 #### using magic
 	$response = $client->postUser(["email" => "foo@bar.com"]);
-	// or
-	$response = $client->user()->post(["email" => "foo@bar.com"]);
-### PUT example
-	$response = $client->put("/user/1", ["email" => "foo@bar.com"]);
-#### using callback
-	$client->put("/user/1", ["email" => "foo@bar.com"], function(Response $response){
-		echo $response;
-	});
-#### using magic
-	$response = $client->user(1)->put(["email" => "foo@bar.com"]);
-### PATCH example
-	$response = $client->patch("/user/1", ["email" => "foo@bar.com"]);
-#### using callback	
-	$client->patch("/user/1", ["email" => "foo@bar.com"], function(Response $response){
-		echo $response;
-	});
-#### using magic
-	$response = $client->user(1)->patch(["email" => "foo@bar.com"]);
-### DELETE example
-	$response = $client->delete("/user/1");
-#### using callback
-	$client->delete("/user/1", function(Response $response){
-		echo $response;
-	});
-#### using magic
-	$response = $client->deleteUser(1);
-	// or
-	$response = $client->user(1)->delete();
+### PUT, PATCH and DELETE examples
+Full example here: https://github.com/foxdie/rest/blob/master/Test/public/client.php
+
 ### Magic calls
 #### Spinal case
 If you want to use magic calls, your routes must use the spinal case
