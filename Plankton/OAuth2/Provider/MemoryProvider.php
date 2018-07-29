@@ -29,15 +29,17 @@ class MemoryProvider implements AccessTokenProvider{
 	 * @param string $client_secret
 	 * @return void
 	 */
-	public function addClient(string $client_id, string $client_secret): void{
+	public function addClient(string $client_id, string $client_secret): MemoryProvider{
 		if (isset($this->clients[$client_id]) && $this->clients[$client_id]["client_secret"] == $client_secret) {
-			return;
+			return $this;
 		}
 		
 		$this->clients[$client_id] = [
 			"client_secret" => $client_secret,
 			"access_token" 	=> $this->createToken()
 		];
+		
+		return $this;
 	}
 	
 	/**
