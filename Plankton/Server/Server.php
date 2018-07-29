@@ -48,7 +48,7 @@ class Server implements RequestHandler{
 		$this->config = $config;
 		
 		$this->request = $this->buildRequest();
-		$this->visitors = [new RouteVisitor(), new ExceptionVisitor()];
+		$this->visitors = $config ? [] : [new RouteVisitor(), new ExceptionVisitor()];
 	}
 	
 	/**
