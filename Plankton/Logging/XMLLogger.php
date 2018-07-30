@@ -25,7 +25,6 @@ class XMLLogger implements Logger{
 	 * {@inheritDoc}
 	 * @see \Plankton\Logging\Logger::log()
 	 */
-	
 	public function log(Request $request, Response $response = NULL): void{
 		$this->logs[$request] = $response;
 	}

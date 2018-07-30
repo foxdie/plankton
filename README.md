@@ -39,13 +39,19 @@ composer require foxdie/rest
       - [@Method annotation](#-method-annotation)
       - [@Exception annotation](#-exception-annotation)
   * [Registering controllers](#registering-controllers)
-  * [Creating middlewares (optionnal)](#creating-middlewares--optionnal-)
+  * [Creating middlewares](#creating-middlewares)
   * [Registering the middlewares](#registering-the-middlewares)
 - [OAuth2](#oauth2)
   * [Client Credentials Grant](#client-credentials-grant)
     + [Client](#client-1)
     + [Server](#server-1)
       - [Creating your own Access Token Provider](#creating-your-own-access-token-provider)
+- [Logging](#logging)
+  * [Client side](#client-side)
+    + [Simple logger](#simple-logger)
+    + [XML logger](#xml-logger)
+    + [Custom logger](#custom-logger)
+  * [Server side](#server-side)
 
 ## Client
 ### Create a client
@@ -141,15 +147,21 @@ $server = new Server();
 $server->run();
 ```
 Full example here: https://github.com/foxdie/rest/blob/master/Test/public/simple-server.php
-### Handling requests
-You must create a controller which extend the abstract class Plankton\Server\Controller
+### Creating controllers
+You must create at least one controller which extends the abstract class Plankton\Server\Controller
 ```php	
 use Plankton\Server\Controller;
 
 class APIController extends Controller{
+	public function getUser(int $id, Request $request): Response{
+	}
+	
+	public function postUser(Request $request): Response{
+	}
 }
 ```
-Your controller will contain one public method for each route of your API.
+Your controller will contain one public method for each action of your API.
+
 You can create routes in 2 different ways:
 - using a config file
 - using annotations
@@ -159,10 +171,10 @@ This will automatically disable the annotation parser. The routes are described 
 ##### Example of config file
 ```yml
 routes:
-    get-users:
-        path: /user
+    get-user:
+        path: /user/{id}
         method: GET
-        controller: Test\Controller\APIController::listUsers
+        controller: Test\Controller\APIController::getUser
     create-user:
         path: /user
         method: POST
@@ -170,12 +182,11 @@ routes:
 ```	        
 Full example here: https://github.com/foxdie/plankton/blob/master/Test/config/server.yml
 
-##### Configure the server
+##### Configuring the server
 ```php
 use Plankton\Server\{Server, Config};
 
 $server = new Server(new Config(CONFIG_PATH));
-$server->run();
 ```
 Full example here: https://github.com/foxdie/plankton/blob/master/Test/public/config-server.php       
 #### Using annotations
@@ -188,11 +199,18 @@ class APIController extends Controller{
 	 * @Method(GET)
 	 */
 	public function getUser(int $id, Request $request): Response{
-		// ...
+	}
+	
+	/**
+	 * @Route(/user)
+	 * @Method(POST)
+	 */
+	public function createUser(Request $request): Response{
 	}
 }
 ```
 The routes will be created automatically according to the annotations @Route and @Method.
+
 Full example here : https://github.com/foxdie/rest/blob/master/Test/Controller/APIController.php
 ##### @Route annotation
 - accepts regular expresssions
@@ -210,7 +228,13 @@ class APIController extends Controller{
 	 * @Method(GET)
 	 */
 	public function getUser(int $id, Request $request): Response{
-		// ...
+	}
+	
+	/**
+	 * @Route(/)
+	 * @Method(POST)
+	 */
+	public function createUser(Request $request): Response{
 	}
 }
 ```
@@ -251,7 +275,8 @@ $server
 	->run();
 ```
 Full example here: https://github.com/foxdie/rest/blob/master/Test/public/simple-server.php
-### Creating middlewares (optionnal)
+### Creating middlewares
+(this is optionnal)
 You must implement the Plankton\Server\Middleware interface.
 The middlewares can handle both incoming requests and outgoing responses.
 ```php
@@ -337,4 +362,71 @@ class PDOProvider implements AccessTokenProvider{
 	public function isValidAccessToken(string $token): bool{
 	}
 }
+```
+## Logging
+### Client side
+#### Simple logger
+```php
+use Plankton\Logging\SimpleLogger;
+
+$client->setLogger(new SimpleLogger());
+
+// ... do some requests
+
+foreach ($client->getLogger()->getLogs() as $request) {
+	$response = $client->getLogger()->getLogs()[$request];
+}
+```
+Full example here: https://github.com/foxdie/rest/blob/master/Test/public/simple-client.php
+#### XML logger
+```php
+use Plankton\Logging\XMLLogger;
+
+$client->setLogger(new XMLLogger());
+
+// ... do some requests
+
+header("Content-type: text/xml");
+echo $client->getLogger()->getLogs()->asXML();
+```
+Full example here: https://github.com/foxdie/rest/blob/master/Test/public/oauth2-client.php
+#### Custom logger
+You have to implement the Plankton\Request\Logger interface:
+```php
+use Plankton\{Request,Response};
+use Plankton\Request\Logger
+
+class CustomLogger implements Logger{
+	public function log(Request $request, Response $response = NULL): void{
+	}
+}
+```
+### Server side
+You can easily log requests and responses by [adding a middleware](#creating-middlewares):
+```php
+use Plankton\{Request,Response};
+use Plankton\Server\{Middleware, RequestDispatcher};
+
+class LogMiddleware implements Middleware{
+	public function process(Request $request, RequestDispatcher $dispatcher): Response{		
+		$response = $dispatcher->process($request);
+		
+		// log $request and $response here
+		
+		return $response
+	}
+}
+```
+
+and then register the middleware(#registering-the-middlewares)
+```php
+use Plankton\Server\Server;
+use Test\Controller\APIController;
+use Test\Middleware\LogMiddleware;
+
+$server = new Server();
+$server
+	->addMiddleware(new LogMiddleware())
+	->registerController(new APIController())
+	->run();
 ```
