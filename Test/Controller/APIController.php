@@ -66,6 +66,7 @@ class APIController extends Controller{
 		// create user
 		$id = 23; 
 		$user = new User($id);
+		$user->setEmail($request->getData("email"));
 		
 		// response
 		$response = new Response();

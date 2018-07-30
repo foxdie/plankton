@@ -147,15 +147,21 @@ $server = new Server();
 $server->run();
 ```
 Full example here: https://github.com/foxdie/rest/blob/master/Test/public/simple-server.php
-### Handling requests
-You must create a controller which extend the abstract class Plankton\Server\Controller
+### Creating controllers
+You must create at least one controller which extends the abstract class Plankton\Server\Controller
 ```php	
 use Plankton\Server\Controller;
 
 class APIController extends Controller{
+	public function getUser(int $id, Request $request): Response{
+	}
+	
+	public function postUser(Request $request): Response{
+	}
 }
 ```
-Your controller will contain one public method for each route of your API.
+Your controller will contain one public method for each action of your API.
+
 You can create routes in 2 different ways:
 - using a config file
 - using annotations
@@ -165,10 +171,10 @@ This will automatically disable the annotation parser. The routes are described 
 ##### Example of config file
 ```yml
 routes:
-    get-users:
-        path: /user
+    get-user:
+        path: /user/{id}
         method: GET
-        controller: Test\Controller\APIController::listUsers
+        controller: Test\Controller\APIController::getUser
     create-user:
         path: /user
         method: POST
@@ -176,12 +182,11 @@ routes:
 ```	        
 Full example here: https://github.com/foxdie/plankton/blob/master/Test/config/server.yml
 
-##### Configure the server
+##### Configuring the server
 ```php
 use Plankton\Server\{Server, Config};
 
 $server = new Server(new Config(CONFIG_PATH));
-$server->run();
 ```
 Full example here: https://github.com/foxdie/plankton/blob/master/Test/public/config-server.php       
 #### Using annotations
@@ -194,11 +199,18 @@ class APIController extends Controller{
 	 * @Method(GET)
 	 */
 	public function getUser(int $id, Request $request): Response{
-		// ...
+	}
+	
+	/**
+	 * @Route(/user)
+	 * @Method(POST)
+	 */
+	public function createUser(Request $request): Response{
 	}
 }
 ```
 The routes will be created automatically according to the annotations @Route and @Method.
+
 Full example here : https://github.com/foxdie/rest/blob/master/Test/Controller/APIController.php
 ##### @Route annotation
 - accepts regular expresssions
@@ -216,7 +228,13 @@ class APIController extends Controller{
 	 * @Method(GET)
 	 */
 	public function getUser(int $id, Request $request): Response{
-		// ...
+	}
+	
+	/**
+	 * @Route(/)
+	 * @Method(POST)
+	 */
+	public function createUser(Request $request): Response{
 	}
 }
 ```
