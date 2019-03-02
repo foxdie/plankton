@@ -15,19 +15,19 @@ $client
 	->setLogger(new SimpleLogger());
 	
 // GET example
-$response = $client->get("/user");
+$response = $client->get("/users");
 
 // POST example
-$response = $client->post("/user", ["email" => "foo@bar.com"]);
+$response = $client->post("/users", ["email" => "foo@bar.com"]);
 
 // PUT example
-$response = $client->put("/user/1", ["email" => "foo@bar.com"]);
+$response = $client->put("/users/1", ["email" => "foo@bar.com"]);
 
 // PATCH example
-$response = $client->patch("/user/1", ["email" => "foo@bar.com"]);
+$response = $client->patch("/users/1", ["email" => "foo@bar.com"]);
 
 // DELETE example
-$response = $client->delete("/user/1");
+$response = $client->delete("/users/1");
 
 /**
  * display logs

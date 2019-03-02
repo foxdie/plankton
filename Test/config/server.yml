@@ -1,26 +1,26 @@
 routes:
     get-users:
-        path: /user
+        path: /users
         method: GET
         controller: Test\Controller\APIController::listUsers
     create-user:
-        path: /user
+        path: /users
         method: POST
         controller: Test\Controller\APIController::createUser
     get-user:
-        path: /user/{id}
+        path: /users/{id}
         method: GET
         controller: Test\Controller\APIController::getUser
     put-user:
-        path: /user/{id}
+        path: /users/{id}
         method: PUT
         controller: Test\Controller\APIController::putUser
     patch-user:
-        path: /user/{id}
+        path: /users/{id}
         method: PATCH
         controller: Test\Controller\APIController::patchUser
     delete-user:
-        path: /user/{id}
+        path: /users/{id}
         method: DELETE
         controller: Test\Controller\APIController::deleteUser
 exceptions:

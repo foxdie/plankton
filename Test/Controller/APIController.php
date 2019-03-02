@@ -12,7 +12,7 @@ use Plankton\Exception;
 class APIController extends Controller{
 	/**
 	 * GET example
-	 * @Route(/user)
+	 * @Route(/users)
 	 * @Method(GET)
 	 */
 	public function listUsers(Request $request): Response{
@@ -25,19 +25,19 @@ class APIController extends Controller{
 		// response
 		$response = new Response();
 		$response
-		->setContentType(Response::CONTENT_TYPE_JSON)
-		->setCode(200)
-		->setContent([
-			[ "id" 	=> $user1->getId(), "email" => $user1->getEmail()],
-			[ "id" 	=> $user2->getId(), "email" => $user2->getEmail()]
-		]);
+    		->setContentType(Response::CONTENT_TYPE_JSON)
+    		->setCode(200)
+    		->setContent([
+    			[ "id" 	=> $user1->getId(), "email" => $user1->getEmail()],
+    			[ "id" 	=> $user2->getId(), "email" => $user2->getEmail()]
+    		]);
 			
 		return $response;
 	}
 	
 	/**
 	 * GET example
-	 * @Route(/user/{id})
+	 * @Route(/users/{id})
 	 * @Method(GET)
 	 */
 	public function getUser(int $id, Request $request): Response{
@@ -59,7 +59,7 @@ class APIController extends Controller{
 
 	/**
 	 * POST example
-	 * @Route(/user)
+	 * @Route(/users)
 	 * @Method(POST)
 	 */
 	public function createUser(Request $request): Response{
@@ -72,14 +72,14 @@ class APIController extends Controller{
 		$response = new Response();
 		$response
 			->setCode(201)
-			->setLocation("/user/{$user->getId()}");
+			->setLocation("/users/{$user->getId()}");
 			
 		return $response;
 	}
 	
 	/**
 	 * PUT example
-	 * @Route(/user/{id})
+	 * @Route(/users/{id})
 	 * @Method(PUT)
 	 */
 	public function putUser(int $id, Request $request): Response{
@@ -102,7 +102,7 @@ class APIController extends Controller{
 	
 	/**
 	 * PATCH example
-	 * @Route(/user/{id})
+	 * @Route(/users/{id})
 	 * @Method(PATCH)
 	 */
 	public function patchUser(int $id, Request $request): Response{
@@ -125,7 +125,7 @@ class APIController extends Controller{
 	
 	/**
 	 * DELETE example
-	 * @Route(/user/{id})
+	 * @Route(/users/{id})
 	 * @Method(DELETE)
 	 */
 	public function deleteUser(int $id): Response{

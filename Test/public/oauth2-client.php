@@ -28,7 +28,7 @@ $client = new Client(API_ENDPOINT, $auth);
 $client
 	->enableSSL(false)
 	->setLogger(new XMLLogger())
-	->get("/user/1", function(Response $response) use ($client, $auth){
+	->get("/users/1", function(Response $response) use ($client, $auth){
 		header("Content-type: text/xml");
 		echo $client->getLogger()->getLogs()->asXML();
 		

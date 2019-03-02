@@ -4,8 +4,10 @@
 
 ## Requirements
 
- - PHP 7.2
+ - PHP >= 7.2
  - PHP cURL extension
+ - Apache HTTP Server >= 2.4
+ - Apache mod_rewrite enabled
 
 ## Installation
 
@@ -63,31 +65,31 @@ $client = new Client(API_ENDPOINT);
 Full example here: https://github.com/foxdie/rest/blob/master/Test/public/simple-client.php
 ### GET example
 ```php
-$response = $client->get("/user");
+$response = $client->get("/users");
 ```
 #### using callback
 ```php
-$client->get("/user", function(Response $response){
+$client->get("/users", function(Response $response){
 	echo $response;
 });
 ```
 #### using magic
 ```php
-$response = $client->getUser();
+$response = $client->getUsers();
 ```
 ### POST example
 ```php
-$response = $client->post("/user", ["email" => "foo@bar.com"]);
+$response = $client->post("/users", ["email" => "foo@bar.com"]);
 ```
 #### using callback
 ```php
-$client->post("/user", ["email" => "foo@bar.com"], function(Response $response){
+$client->post("/users", ["email" => "foo@bar.com"], function(Response $response){
 	echo $response->getLocation();
 });
 ```
 #### using magic
 ```php
-$response = $client->postUser(["email" => "foo@bar.com"]);
+$response = $client->postUsers(["email" => "foo@bar.com"]);
 ```
 ### PUT, PATCH and DELETE examples
 Full example here: https://github.com/foxdie/rest/blob/master/Test/public/simple-client.php
@@ -97,24 +99,24 @@ Full example here: https://github.com/foxdie/rest/blob/master/Test/public/simple
 If you want to use magic calls, your routes must use the spinal case
 Example:
 
-	$client->getUserAccount()
+	$client->getUserAccounts()
 will match the following route:
 
-	GET /user-account
+	GET /user-accounts
 camel case and snake case are not supported
 #### Examples
 | call | route |
 | --- | --- |
-| $client->getUser(); | GET /user |
-| $client->group(1)->getUser(); | GET /group/1/user |
-| $client->group(1)->getUser(2); | GET /group/1/user/2 |
-| $client->postUser([]); | POST /user |
-| $client->group(1)->postUser([]); | POST /group/1/user |
-| $client->deleteUser(1); | DELETE /user/1 |
-| $client->user(1)->delete(); | DELETE /user/1 |
-| $client->group(1)->deleteUser(2); | DELETE /group/1/user/2 |
-| $client->group(1)->user(2)->delete(); | DELETE /group/1/user/2 |
-| $client->group(1)->user()->delete(2); | DELETE /group/1/user/2 |
+| $client->getUsers(); | GET /users |
+| $client->groups(1)->getUsers(); | GET /groups/1/users |
+| $client->groups(1)->getUsers(2); | GET /groups/1/users/2 |
+| $client->postUsers([]); | POST /users |
+| $client->groups(1)->postUsers([]); | POST /groups/1/users |
+| $client->deleteUsers(1); | DELETE /users/1 |
+| $client->users(1)->delete(); | DELETE /users/1 |
+| $client->groups(1)->deleteUsers(2); | DELETE /groups/1/users/2 |
+| $client->groups(1)->users(2)->delete(); | DELETE /groups/1/users/2 |
+| $client->groups(1)->users()->delete(2); | DELETE /groups/1/users/2 |
 ### Authentication strategy	
 #### anonymous auth
 ```php
@@ -153,10 +155,10 @@ You must create at least one controller which extends the abstract class Plankto
 use Plankton\Server\Controller;
 
 class APIController extends Controller{
-	public function getUser(int $id, Request $request): Response{
+	public function getUsers(int $id, Request $request): Response{
 	}
 	
-	public function postUser(Request $request): Response{
+	public function postUsers(Request $request): Response{
 	}
 }
 ```
@@ -172,11 +174,11 @@ This will automatically disable the annotation parser. The routes are described 
 ```yml
 routes:
     get-user:
-        path: /user/{id}
+        path: /users/{id}
         method: GET
         controller: Test\Controller\APIController::getUser
     create-user:
-        path: /user
+        path: /users
         method: POST
         controller: Test\Controller\APIController::createUser
 ```	        
@@ -195,14 +197,14 @@ use Plankton\Server\Controller;
 
 class APIController extends Controller{
 	/**
-	 * @Route(/user/{id})
+	 * @Route(/users/{id})
 	 * @Method(GET)
 	 */
 	public function getUser(int $id, Request $request): Response{
 	}
 	
 	/**
-	 * @Route(/user)
+	 * @Route(/users)
 	 * @Method(POST)
 	 */
 	public function createUser(Request $request): Response{
@@ -220,7 +222,7 @@ Full example here : https://github.com/foxdie/rest/blob/master/Test/Controller/A
 You can add a route prefix to your controller:
 ```php	
 /**
- * @Route(/user)
+ * @Route(/users)
  */
 class APIController extends Controller{
 	/**

@@ -16,20 +16,20 @@ $client
 	->setLogger(new SimpleLogger());
 
 // GET example
-$response = $client->get("/user");
+$response = $client->get("/users");
 
 // GET example with callback
-$client->get("/user", function(Response $response){
+$client->get("/users", function(Response $response){
 });
 
 // GET example with magic call
 $response = $client->getUser();
 
 // POST example
-$response = $client->post("/user", ["email" => "foo@bar.com"]);
+$response = $client->post("/users", ["email" => "foo@bar.com"]);
 
 // POST example with callback
-$client->post("/user", ["email" => "foo@bar.com"], function(Response $response){
+$client->post("/users", ["email" => "foo@bar.com"], function(Response $response){
 });
 
 // POST example with magic call
@@ -39,30 +39,30 @@ $response = $client->postUser(["email" => "foo@bar.com"]);
 $response = $client->user()->post(["email" => "foo@bar.com"]);
 
 // PUT example
-$response = $client->put("/user/1", ["email" => "foo@bar.com"]);
+$response = $client->put("/users/1", ["email" => "foo@bar.com"]);
 
 // PUT example with callback
-$client->put("/user/1", ["email" => "foo@bar.com"], function(Response $response){
+$client->put("/users/1", ["email" => "foo@bar.com"], function(Response $response){
 });
 
 // PUT example with magic call
 $response = $client->user(1)->put(["email" => "foo@bar.com"]);
 	
 //* PATCH example
-$response = $client->patch("/user/1", ["email" => "foo@bar.com"]);
+$response = $client->patch("/users/1", ["email" => "foo@bar.com"]);
 	
 // PATCH example with callback
-$client->patch("/user/1", ["email" => "foo@bar.com"], function(Response $response){
+$client->patch("/users/1", ["email" => "foo@bar.com"], function(Response $response){
 });
 
 //* PATCH example with magic call
 $response = $client->user(1)->patch(["email" => "foo@bar.com"]);
 	
 // DELETE example
-$response = $client->delete("/user/1");
+$response = $client->delete("/users/1");
 	
 // DELETE example with callback
-$client->delete("/user/1", function(Response $response){
+$client->delete("/users/1", function(Response $response){
 });
 
 // DELETE example with magic call
