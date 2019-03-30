@@ -139,14 +139,12 @@ class Server implements RequestHandler{
 	 */
 	protected function buildRequest(): Request{
 		$uri = $_SERVER["PATH_INFO"] ?? preg_replace("/^(.+)\?.*\$/", "\$1", $_SERVER["REQUEST_URI"]);
-		$url = $_SERVER["REQUEST_SCHEME"] . "://" . $_SERVER["HTTP_HOST"] . $uri;
+
+		$url = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443)?'https':'http' . "://" . $_SERVER["HTTP_HOST"] . $uri;
 		
 		$request = new Request($url, $_SERVER["REQUEST_METHOD"]);
 		
-		parse_str(file_get_contents("php://input"), $data);
-		$request->setData($data);
-		
-		parse_str($_SERVER["QUERY_STRING"], $parameters);
+		parse_str(isset($_SERVER["QUERY_STRING"])?$_SERVER['QUERY_STRING']:'', $parameters);
 		foreach ($parameters as $name => $value) {
 			$request->setParameter($name, $value);
 		}
@@ -154,7 +152,17 @@ class Server implements RequestHandler{
 		foreach (getallheaders() as $name => $value) {
 			$request->setHeader($name, $value);
 		}
-		
+
+		$d = file_get_contents("php://input");
+
+		if ($request->getHeader('Content-Type') == Response::CONTENT_TYPE_JSON) {
+			$data = json_decode($d, true);
+		} else {
+			parse_str($d, $data);
+		}
+
+		$request->setData($data);
+
 		return $request;
 	}
 	
