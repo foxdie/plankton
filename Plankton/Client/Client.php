@@ -60,13 +60,16 @@ class Client{
 	/**
 	 * @access public
 	 * @param string $uri
-	 * @param array $data
+	 * @param mixed $data
 	 * @param callable $callback
 	 * @return \Plankton\Response|null
 	 */
-	public function post(string $uri, array $data, callable $callback = NULL): ?Response{
-		$request = new Request($this->apiEntryPoint . $uri, Request::METHOD_POST);
-		$request->setData($data);
+	public function post(string $uri, $data, callable $callback = NULL): ?Response{
+		$request = new Request($this->apiEntryPoint . $uri);
+		$request
+            ->setMethod(Request::METHOD_POST)
+            ->setContentType($this->guessContentType($data))
+            ->setData($data);
 		
 		return $this->send($request, $callback);
 	}
@@ -74,13 +77,16 @@ class Client{
 	/**
 	 * @access public
 	 * @param string $uri
-	 * @param array $data
+	 * @param mixed $data
 	 * @param callable $callback
 	 * @return \Plankton\Response|null
 	 */
-	public function put(string $uri, array $data, callable $callback = NULL): ?Response{
-		$request = new Request($this->apiEntryPoint . $uri, Request::METHOD_PUT);
-		$request->setData($data);
+	public function put(string $uri, $data, callable $callback = NULL): ?Response{
+		$request = new Request($this->apiEntryPoint . $uri);
+		$request
+    		->setMethod(Request::METHOD_PUT)
+    		->setContentType($this->guessContentType($data))
+    		->setData($data);
 		
 		return $this->send($request, $callback);
 	}
@@ -88,13 +94,16 @@ class Client{
 	/**
 	 * @access public
 	 * @param string $uri
-	 * @param array $data
+	 * @param mixed $data
 	 * @param callable $callback
 	 * @return \Plankton\Response|null
 	 */
-	public function patch(string $uri, array $data, callable $callback = NULL): ?Response{
-		$request = new Request($this->apiEntryPoint . $uri, Request::METHOD_PATCH);
-		$request->setData($data);
+	public function patch(string $uri, $data, callable $callback = NULL): ?Response{
+		$request = new Request($this->apiEntryPoint . $uri);
+		$request
+    		->setMethod(Request::METHOD_PATCH)
+    		->setContentType($this->guessContentType($data))
+    		->setData($data);
 		
 		return $this->send($request, $callback);
 	}
@@ -133,7 +142,7 @@ class Client{
 	/**
 	 * @access public
 	 * @param bool $enableSSL
-	 * @return \Plankton\Client
+	 * @return \Plankton\Client\Client
 	 */
 	public function enableSSL(bool $enableSSL = true): Client{
 		$this->enableSSL = !!$enableSSL;
@@ -142,13 +151,13 @@ class Client{
 	}
 	
 	/**
-	 * @access protected
+	 * @access public
 	 * @param Request $request
 	 * @param callable $callback
 	 * @throws \InvalidArgumentException
 	 * @return \Plankton\Response|null
 	 */
-	protected function send(Request $request, callable $callback = NULL): ?Response{
+	public function send(Request $request, callable $callback = NULL): ?Response{
 		$response = $this->strategy->send($request, [$this, "curl"]);
 		// @todo response may be NULL
 
@@ -194,11 +203,14 @@ class Client{
 			case Request::METHOD_PATCH:
 			case Request::METHOD_PUT:
 				curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $request->getMethod());
-				curl_setopt($ch, CURLOPT_POSTFIELDS, $this->buildQuery($request));
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $request->__toString());
+				
 				break;
 			case Request::METHOD_POST:
 				curl_setopt($ch, CURLOPT_POST, true);
-				curl_setopt($ch, CURLOPT_POSTFIELDS, $this->buildQuery($request));
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $request->__toString());
+				
+				break;
 		}
 		
 		// request
@@ -234,20 +246,7 @@ class Client{
 		
 		return $response;
 	}
-	
-	/**
-	 * @access private
-	 * @param Request $request
-	 * @return string
-	 */
-	private function buildQuery(Request $request): ?string{
-		if (is_array($request->getData())) {
-			return http_build_query($request->getData());
-		}
-	
-		return $request->getData();
-	}
-	
+
 	/**
 	 * @access private
 	 * @param Request $request
@@ -260,6 +259,24 @@ class Client{
 		}
 	
 		return $headers;
+	}
+	
+	/**
+	 * @todo optimize
+	 * @access private
+	 * @param mixed $data
+	 * @return string
+	 */
+	private function guessContentType($data){
+	    if (is_object($data)) {
+	        return Request::CONTENT_TYPE_JSON;
+	    }
+	    
+	    if (is_array($data)) {
+	        return Request::CONTENT_TYPE_X_WWW_FORM_URLENCODED;
+	    }
+	    
+	    return Request::CONTENT_TYPE_TEXT_PLAIN;
 	}
 	
 	/**

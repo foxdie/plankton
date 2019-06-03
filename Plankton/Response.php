@@ -3,10 +3,7 @@
 namespace Plankton;
 
 
-class Response{
-	const CONTENT_TYPE_JSON = "application/json";
-	const CONTENT_TYPE_XML 	= "application/xml";
-	
+class Response implements HTTPMessage{
 	/**
 	 * @access protected
 	 * @var array
@@ -64,23 +61,23 @@ class Response{
 	
 	/**
 	 * @access public
-	 * @param string $content
+	 * @param mixed $content
 	 */
-	public function __construct(string $content = ""){
+	public function __construct($content = ""){
 		$this->content = $content;
 		$this->code = 200;
 
 		$this->setHeader("Cache-Control", 	["no-cache", "no-store", "must-revalidate"]);
-		$this->setHeader("Content-Length", 	strlen($content));
+		$this->setHeader("Content-Length",  strlen($this->__toString()));
 		$this->setHeader("Content-Type", 	self::CONTENT_TYPE_JSON);
 	}
 	
 	/**
 	 * @access public
-	 * @return string
+	 * @return mixed
 	 */
 	public function getContent(): string{
-		return $this->content;
+		return $this->__toString();
 	}
 	
 	/**
@@ -89,29 +86,18 @@ class Response{
 	 * @return \Plankton\Response
 	 */
 	public function setContent($content): Response{
-		if (is_array($content)) {
-			switch ($this->headers["Content-Type"]) {
-				case self::CONTENT_TYPE_JSON :
-					$content = self::serializeJSON($content);
-					break;
-				case self::CONTENT_TYPE_XML :
-					$content = self::serializeXML($content);
-					break;
-			}
-		}
-		
 		$this->content = $content;
-		$this->setHeader("Content-Length", strlen($this->content));
+		$this->setHeader("Content-Length", strlen($this->__toString()));
 		
 		return $this;
 	}
 	
 	/**
 	 * @access public
-	 * @return string
+	 * @return string|null
 	 */
-	public function getContentType(): string{
-		return $this->getHeader("Content-Type");
+	public function getContentType(): ?string{
+	    return $this->getHeader("Content-Type");
 	}
 	
 	/**
@@ -211,6 +197,31 @@ class Response{
 	 * @return string
 	 */
 	public function __toString(): string{
-		return $this->content . "\n\n";
+        switch ($this->getHeader("Content-Type")) {
+            case self::CONTENT_TYPE_JSON :
+                if (is_array($this->content) || is_object($this->content)) {
+                    return self::serializeJSON($this->content) . "\n\n";
+                }
+                
+                break;
+            case self::CONTENT_TYPE_XML :
+                if (is_array($this->content)) {
+                    return self::serializeXML($this->content) . "\n\n";
+                }
+                
+                if (is_object($this->content)) {
+                    return json_decode(json_encode($this->content), true) . "\n\n";
+                }
+                
+                break;
+            case self::CONTENT_TYPE_X_WWW_FORM_URLENCODED:
+                if (is_array($this->content)) {
+                    return http_build_query($this->content) . "\n\n";
+                }
+                
+                break;
+        }
+	    
+        return $this->content . "\n\n";
 	}
 }

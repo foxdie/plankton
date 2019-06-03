@@ -3,7 +3,7 @@
 namespace Plankton;
 
 
-class Request{
+class Request implements HTTPMessage{
 	const METHOD_GET 	= "GET";
 	const METHOD_POST 	= "POST";
 	const METHOD_PUT 	= "PUT";
@@ -48,7 +48,7 @@ class Request{
 	
 	/**
 	 * @access protected
-	 * @var array
+	 * @var mixed
 	 */
 	protected $data;
 	
@@ -67,7 +67,11 @@ class Request{
 		$this->uri = $this->sanitizeURI($url["path"]);
 		$this->scheme = $url["scheme"];
 		$this->host = $url["host"];
-		$this->parameters = isset($url["query"]) ? parse_str($url["query"]) : [];
+		$this->parameters = [];
+		
+		if (isset($url["query"])) {
+            parse_str($url["query"], $this->parameters);
+		}
 	}
 	
 	/**
@@ -76,6 +80,34 @@ class Request{
 	 */
 	public function getMethod(): string{
 		return $this->method;
+	}
+	
+	/**
+	 * @access public
+	 * @param string $method
+	 * @return \Plankton\Request
+	 */
+	public function setMethod(string $method): Request{
+	   $this->method = $method;
+	   
+	   return $this;
+	}
+	
+	/**
+	 * @access public
+	 * @return string|null
+	 */
+	public function getContentType(){
+	    return $this->getHeader("Content-Type");
+	}
+	
+	/**
+	 * @access public
+	 * @param string $contentType
+	 * @return \Plankton\Request
+	 */
+	public function setContentType(string $contentType): Request{
+	    return $this->setHeader("Content-Type", $contentType);
 	}
 	
 	/**
@@ -112,7 +144,13 @@ class Request{
 	 * @return string
 	 */
 	public function getURL(): string{
-		return "{$this->scheme}://{$this->host}{$this->uri}";
+		$url = "{$this->scheme}://{$this->host}{$this->uri}";
+		
+		if (count($this->parameters)) {
+		    $url .= "?" . http_build_query($this->parameters);
+		}
+		
+		return $url;
 	}
 	
 	/**
@@ -145,19 +183,26 @@ class Request{
 	 * return mixed
 	 */
 	public function getData(string $key = null){
-		if ($key === null) {
-			return $this->data;
-		}
-		
-		return $this->data[$key] ?? NULL;
+	    if ($key) {
+	        switch (true) {
+	            case is_array($this->data):
+	                return $this->data[$key] ?? NULL;
+	            case is_object($this->data):
+	                return $this->data->$key ?? NULL;
+	            default:
+	                return NULL;
+	        }
+	    }
+
+	    return $this->data;
 	}
 	
 	/**
 	 * @access public
-	 * @param array $data
+	 * @param mixed $data
 	 * @return \Plankton\Request
 	 */
-	public function setData(array $data): Request{
+	public function setData($data): Request{
 		$this->data = $data;
 	
 		return $this;
@@ -214,6 +259,41 @@ class Request{
 	 */
 	public function hasParameter($name): bool{
 		return $this->getParameter($name) !== null;
+	}
+	
+	/**
+	 * @access public
+	 * @return string
+	 */
+	public function __toString(): string{
+	    switch ($this->getHeader("Content-Type")) {
+	        case self::CONTENT_TYPE_JSON :
+	            if (is_array($this->data) || is_object($this->data)) {
+	                return json_encode($this->data);
+	            }
+	            
+	            return $this->data;
+	        case self::CONTENT_TYPE_X_WWW_FORM_URLENCODED:
+	            if (is_array($this->data)) {
+	                return http_build_query($this->data);
+	            }
+	            
+	            if (is_object($this->data)) {
+	                return http_build_query(json_decode(json_encode($this->data)));
+	            }
+	            
+	            return $this->data;
+	        default:
+	            if (is_array($this->data)) {
+	                return http_build_query($this->data);
+	            }
+	            
+	            if (is_object($this->data)) {
+	                return http_build_query(json_decode(json_encode($this->data)));
+	            }
+	            
+	            return $this->data;
+	    }
 	}
 	
 	/**
