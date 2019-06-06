@@ -15,7 +15,7 @@ composer require foxdie/rest
 
 ## Table of content
 - [Client](#client)
-  * [Create a client](#create-a-client)
+  * [Creating a client](#creating-a-client)
   * [GET example](#get-example)
     + [using callback](#using-callback)
     + [using magic](#using-magic)
@@ -23,6 +23,7 @@ composer require foxdie/rest
     + [using callback](#using-callback-1)
     + [using magic](#using-magic-1)
   * [PUT, PATCH and DELETE examples](#put--patch-and-delete-examples)
+  * [Content types](#content-types)
   * [Magic calls](#magic-calls)
     + [Spinal case](#spinal-case)
     + [Examples](#examples)
@@ -56,7 +57,7 @@ composer require foxdie/rest
   * [Server side](#server-side)
 
 ## Client
-### Create a client
+### Creating a client
 ```php
 use Plankton\Client\Client;
 	
@@ -117,7 +118,35 @@ camel case and snake case are not supported
 | $client->groups(1)->deleteUsers(2); | DELETE /groups/1/users/2 |
 | $client->groups(1)->users(2)->delete(); | DELETE /groups/1/users/2 |
 | $client->groups(1)->users()->delete(2); | DELETE /groups/1/users/2 |
+
+### Content types
+When you are using magic calls (e.g. `$client->postUsers([]);`) or one of the methods `Client::post()`, `Client::put()`, `Client::patch()`, a `Content-Type` header is automatically added to the request. The `Content-Type` is automatically guessed according to the data you send to the server :
+| data type | Content-Type |
+| --- | --- |
+| array | application/x-www-form-urlencoded |
+| object | application/json |
+| valid json string | application/json |
+| valid xml string | application/xml |
+| string | text/plain |
+
+However, you still can set the `Content-Type` manually like this :
+```php
+use Plankton\Client\Client;
+use Plankton\Request;
+
+$request = new Request(API_ENDPOINT . "/users");
+$request
+    ->setMethod(Request::METHOD_POST)
+    ->setContentType(Request::CONTENT_TYPE_X_WWW_FORM_URLENCODED)
+    ->setData(["foo" => "bar"]);
+
+$client = new Client(API_ENDPOINT);
+$client->send($request, function(Response $response){
+});
+```
+
 ### Authentication strategy	
+
 #### anonymous auth
 ```php
 $client = new Client(API_ENDPOINT);

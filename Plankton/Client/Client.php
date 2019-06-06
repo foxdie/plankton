@@ -275,11 +275,16 @@ class Client{
 	        return Request::CONTENT_TYPE_JSON;
 	    }
 	    
-	    if (preg_match("#^\s*[[{].*[]}]\s\$#", $data) 
+	    if (preg_match("#^\s*[[{].*[]}]\s*\$#", $data) 
 	        && json_decode($data) 
 	        && json_last_error() == JSON_ERROR_NONE) {
 	        return Request::CONTENT_TYPE_JSON;
 	    }
+	    
+	    if (preg_match("#^\s*<\?xml.+\$#", $data)
+	        && simplexml_load_string($data)) {
+            return Request::CONTENT_TYPE_XML;
+        }
 	    
 	    return Request::CONTENT_TYPE_TEXT_PLAIN;
 	}
