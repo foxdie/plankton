@@ -262,18 +262,23 @@ class Client{
 	}
 	
 	/**
-	 * @todo optimize
 	 * @access private
 	 * @param mixed $data
 	 * @return string
 	 */
 	private function guessContentType($data){
+	    if (is_array($data)) {
+	        return Request::CONTENT_TYPE_X_WWW_FORM_URLENCODED;
+	    }
+	    
 	    if (is_object($data)) {
 	        return Request::CONTENT_TYPE_JSON;
 	    }
 	    
-	    if (is_array($data)) {
-	        return Request::CONTENT_TYPE_X_WWW_FORM_URLENCODED;
+	    if (preg_match("#^\s*[[{].*[]}]\s\$#", $data) 
+	        && json_decode($data) 
+	        && json_last_error() == JSON_ERROR_NONE) {
+	        return Request::CONTENT_TYPE_JSON;
 	    }
 	    
 	    return Request::CONTENT_TYPE_TEXT_PLAIN;
