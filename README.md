@@ -127,6 +127,7 @@ camel case and snake case are not supported
 
 ### Content types
 When you are using magic calls (e.g. `$client->postUsers([]);`) or one of the methods `Client::post()`, `Client::put()`, `Client::patch()`, a `Content-Type` header is automatically added to the request. The `Content-Type` is automatically guessed according to the data you send to the server :
+
 | data type | Content-Type |
 | --- | --- |
 | array | application/x-www-form-urlencoded |
