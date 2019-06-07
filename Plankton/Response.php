@@ -69,7 +69,6 @@ class Response implements HTTPMessage{
 
 		$this->setHeader("Cache-Control", 	["no-cache", "no-store", "must-revalidate"]);
 		$this->setHeader("Content-Length",  strlen($this->__toString()));
-		$this->setHeader("Content-Type", 	self::CONTENT_TYPE_JSON);
 	}
 	
 	/**
