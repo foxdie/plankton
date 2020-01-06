@@ -265,7 +265,7 @@ class Request implements HTTPMessage{
 	 * @access public
 	 * @return string
 	 */
-	public function __toString(): string{
+	public function __toString(): ?string{
 	    switch ($this->getHeader("Content-Type")) {
 	        case self::CONTENT_TYPE_JSON :
 	            if (is_array($this->data) || is_object($this->data)) {
