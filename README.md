@@ -164,10 +164,12 @@ $client->send($request, function(Response $response){
 For readability reasons, you can use `arrays` or `objects` with the `Request::setData()` method, regardless of the content-type you use. The data will be automatically converted according to the rules below :
 
 | Content-Type | Data type | Conversion |
+| --- | --- | --- |
 | Request::CONTENT_TYPE_JSON | array | json string |
 | Request::CONTENT_TYPE_JSON | object | json string |
 | other | array | URL-encoded query string |
 | other | object | URL-encoded query string |
+
 
 ### Authentication strategy	
 
