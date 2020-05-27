@@ -62,10 +62,7 @@ class RouteVisitor implements ControllerVisitor{
 		if (!$method->isPublic() || method_exists("Plankton\Server\Controller", $method->getName())) {
 			return null;
 		}
-	
-		$uri = false;
-		$httpMethod = Request::METHOD_GET;
-	
+		
 		// annotations
 		$doc = $method->getDocComment();
 	

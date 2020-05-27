@@ -23,7 +23,7 @@ $client->get("/users", function(Response $response){
 });
 
 // GET example with magic call
-$response = $client->getUser();
+$response = $client->getUsers();
 
 // POST example
 $response = $client->post("/users", ["email" => "foo@bar.com"]);
@@ -33,10 +33,10 @@ $client->post("/users", ["email" => "foo@bar.com"], function(Response $response)
 });
 
 // POST example with magic call
-$response = $client->postUser(["email" => "foo@bar.com"]);
+$response = $client->postUsers(["email" => "foo@bar.com"]);
 
 // or
-$response = $client->user()->post(["email" => "foo@bar.com"]);
+$response = $client->users()->post(["email" => "foo@bar.com"]);
 
 // PUT example
 $response = $client->put("/users/1", ["email" => "foo@bar.com"]);
@@ -46,7 +46,7 @@ $client->put("/users/1", ["email" => "foo@bar.com"], function(Response $response
 });
 
 // PUT example with magic call
-$response = $client->user(1)->put(["email" => "foo@bar.com"]);
+$response = $client->users(1)->put(["email" => "foo@bar.com"]);
 	
 //* PATCH example
 $response = $client->patch("/users/1", ["email" => "foo@bar.com"]);
@@ -56,7 +56,7 @@ $client->patch("/users/1", ["email" => "foo@bar.com"], function(Response $respon
 });
 
 //* PATCH example with magic call
-$response = $client->user(1)->patch(["email" => "foo@bar.com"]);
+$response = $client->users(1)->patch(["email" => "foo@bar.com"]);
 	
 // DELETE example
 $response = $client->delete("/users/1");
@@ -66,10 +66,10 @@ $client->delete("/users/1", function(Response $response){
 });
 
 // DELETE example with magic call
-$response = $client->deleteUser(1);
+$response = $client->deleteUsers(1);
 
 // or
-$response = $client->user(1)->delete();
+$response = $client->users(1)->delete();
 
 
 /**

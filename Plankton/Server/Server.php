@@ -101,7 +101,7 @@ class Server implements RequestHandler{
 	
 	/**
 	 * {@inheritDoc}
-	 * @see \Plankton\RequestHandler::process()
+	 * @see \Plankton\Server\RequestHandler::process()
 	 */
 	public function process(Request $request, RequestDispatcher $dispatcher): Response{
 		foreach ($this->controllers as $controller) {
@@ -142,10 +142,7 @@ class Server implements RequestHandler{
 		$url = $_SERVER["REQUEST_SCHEME"] . "://" . $_SERVER["HTTP_HOST"] . $uri;
 		
 		$request = new Request($url, $_SERVER["REQUEST_METHOD"]);
-		
-		parse_str(file_get_contents("php://input"), $data);
-		$request->setData($data);
-		
+
 		parse_str($_SERVER["QUERY_STRING"], $parameters);
 		foreach ($parameters as $name => $value) {
 			$request->setParameter($name, $value);
@@ -154,6 +151,17 @@ class Server implements RequestHandler{
 		foreach (getallheaders() as $name => $value) {
 			$request->setHeader($name, $value);
 		}
+		
+		switch ($request->getContentType()) {
+		    case Request::CONTENT_TYPE_X_WWW_FORM_URLENCODED:
+                parse_str(file_get_contents("php://input"), $data);
+                break;
+		    default:
+		        $data = file_get_contents("php://input");
+		        break;
+		}
+		 
+		$request->setData($data);
 		
 		return $request;
 	}
