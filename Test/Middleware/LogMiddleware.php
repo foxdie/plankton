@@ -11,7 +11,7 @@ use Plankton\Server\RequestDispatcher;
 class LogMiddleware implements Middleware{
 	/**
 	 * {@inheritDoc}
-	 * @see \Plankton\RequestHandler::process()
+	 * @see \Plankton\Server\RequestHandler::process()
 	 */
 	public function process(Request $request, RequestDispatcher $dispatcher): Response{
 		$this->log($request);

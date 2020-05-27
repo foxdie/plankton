@@ -28,7 +28,7 @@ class ClientCredentialsMiddleware implements Middleware{
 	
 	/**
 	 * @access public
-	 * @param \AccessTokenProvider $provider
+	 * @param AccessTokenProvider $provider
 	 */
 	public function __construct(AccessTokenProvider $provider, $tokenURI = "/token"){
 		$this->provider = $provider;
@@ -37,7 +37,7 @@ class ClientCredentialsMiddleware implements Middleware{
 	
 	/**
 	 * {@inheritDoc}
-	 * @see \Plankton\RequestHandler::process()
+	 * @see \Plankton\Server\RequestHandler::process()
 	 */
 	public function process(Request $request, RequestDispatcher $dispatcher): Response{
 		// authorized request

@@ -11,3 +11,4 @@ RewriteRule ^api/v2/(.+) oauth2-server.php/$1 [L,QSA]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^api/v3/(.+) config-server.php/$1 [L,QSA]
+

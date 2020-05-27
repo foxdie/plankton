@@ -49,14 +49,14 @@ final class MagicCall{
 				case Request::METHOD_POST:
 				case Request::METHOD_PUT:
 				case Request::METHOD_PATCH:
-					return $this->client->$method($this->uri, $args[0]);
+				    return $this->client->$method($this->uri, $args[0]);
+				case Request::METHOD_GET:
 				case Request::METHOD_DELETE:
+				default:
 					if (count($args)) {
 						$this->uri .= "/" . $this->spinalCase($args[0]);
 					}
 					
-					return $this->client->$method($this->uri);
-				default:
 					return $this->client->$method($this->uri);
 			}
 		}

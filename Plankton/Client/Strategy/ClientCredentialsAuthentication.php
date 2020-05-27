@@ -24,7 +24,7 @@ class ClientCredentialsAuthentication implements AuthenticationStrategy{
 	
 	/**
 	 * @access private
-	 * @var Plankton\OAuth2\Token\BearerToken
+	 * @var \Plankton\OAuth2\Token\BearerToken
 	 */
 	private $accessToken;
 	

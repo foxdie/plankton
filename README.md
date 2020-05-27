@@ -15,7 +15,7 @@ composer require foxdie/rest
 
 ## Table of content
 - [Client](#client)
-  * [Create a client](#create-a-client)
+  * [Creating a client](#creating-a-client)
   * [GET example](#get-example)
     + [using callback](#using-callback)
     + [using magic](#using-magic)
@@ -23,6 +23,8 @@ composer require foxdie/rest
     + [using callback](#using-callback-1)
     + [using magic](#using-magic-1)
   * [PUT, PATCH and DELETE examples](#put--patch-and-delete-examples)
+  * [Content types](#content-types)
+  * [Custom request example](#custom-request-example)
   * [Magic calls](#magic-calls)
     + [Spinal case](#spinal-case)
     + [Examples](#examples)
@@ -56,17 +58,20 @@ composer require foxdie/rest
   * [Server side](#server-side)
 
 ## Client
-### Create a client
+
+### Creating a client
 ```php
 use Plankton\Client\Client;
 	
 $client = new Client(API_ENDPOINT);
 ```
 Full example here: https://github.com/foxdie/rest/blob/master/Test/public/simple-client.php
+
 ### GET example
 ```php
 $response = $client->get("/users");
 ```
+
 #### using callback
 ```php
 $client->get("/users", function(Response $response){
@@ -95,6 +100,7 @@ $response = $client->postUsers(["email" => "foo@bar.com"]);
 Full example here: https://github.com/foxdie/rest/blob/master/Test/public/simple-client.php
 
 ### Magic calls
+
 #### Spinal case
 If you want to use magic calls, your routes must use the spinal case
 Example:
@@ -104,6 +110,7 @@ will match the following route:
 
 	GET /user-accounts
 camel case and snake case are not supported
+
 #### Examples
 | call | route |
 | --- | --- |
@@ -117,7 +124,53 @@ camel case and snake case are not supported
 | $client->groups(1)->deleteUsers(2); | DELETE /groups/1/users/2 |
 | $client->groups(1)->users(2)->delete(); | DELETE /groups/1/users/2 |
 | $client->groups(1)->users()->delete(2); | DELETE /groups/1/users/2 |
+
+### Content types
+When you are using magic calls (e.g. `$client->postUsers([]);`) or one of the methods `Client::post()`, `Client::put()`, `Client::patch()`, a `Content-Type` header is automatically added to the request. The `Content-Type` is automatically guessed according to the data you send to the server :
+
+| data type | Content-Type |
+| --- | --- |
+| array | application/x-www-form-urlencoded |
+| object | application/json |
+| valid json string | application/json |
+| valid xml string | application/xml |
+| string | text/plain |
+
+
+
+However, you still can set the `Content-Type` manually with a [customized request](#custom-request-example)
+
+### Custom request example
+```php
+use Plankton\Client\Client;
+use Plankton\Request;
+
+$request = new Request(API_ENDPOINT . "/users");
+$request
+    ->setMethod(Request::METHOD_POST)
+    ->setParameter("foo", "bar")
+    ->setHeader("User-Agent", "Mozilla/5.0")
+    ->setContentType(Request::CONTENT_TYPE_JSON)
+    ->setData(["email" => "foo@bar.com"]);
+
+$client = new Client(API_ENDPOINT);
+$client->send($request, function(Response $response){
+    // ...
+});
+```
+
+#### Automatic data conversion
+
+For readability reasons, you can use `arrays` or `objects` with the `Request::setData()` method, regardless of the content-type you use. The data will be automatically converted according to the rules below :
+
+| Content-Type | Data type | Conversion |
+| Request::CONTENT_TYPE_JSON | array | json string |
+| Request::CONTENT_TYPE_JSON | object | json string |
+| other | array | URL-encoded query string |
+| other | object | URL-encoded query string |
+
 ### Authentication strategy	
+
 #### anonymous auth
 ```php
 $client = new Client(API_ENDPOINT);
@@ -140,7 +193,9 @@ $client = new Client(API_ENDPOINT, new ClientCredentialsAuthentication(
 ```
 The authorize and access/refresh token requests will be performed automatically.
 The 3rd parameter is optionnal, the default value is "/token"
+
 ## Server
+
 ### Creating a server
 ```php
 use Plankton\Server\Server;
@@ -149,6 +204,7 @@ $server = new Server();
 $server->run();
 ```
 Full example here: https://github.com/foxdie/rest/blob/master/Test/public/simple-server.php
+
 ### Creating controllers
 You must create at least one controller which extends the abstract class Plankton\Server\Controller
 ```php	
@@ -170,6 +226,7 @@ You can create routes in 2 different ways:
 
 #### Using a config file
 This will automatically disable the annotation parser. The routes are described in a YAML file
+
 ##### Example of config file
 ```yml
 routes:
@@ -190,7 +247,8 @@ use Plankton\Server\{Server, Config};
 
 $server = new Server(new Config(CONFIG_PATH));
 ```
-Full example here: https://github.com/foxdie/plankton/blob/master/Test/public/config-server.php       
+Full example here: https://github.com/foxdie/plankton/blob/master/Test/public/config-server.php    
+   
 #### Using annotations
 ```php
 use Plankton\Server\Controller;
@@ -214,6 +272,7 @@ class APIController extends Controller{
 The routes will be created automatically according to the annotations @Route and @Method.
 
 Full example here : https://github.com/foxdie/rest/blob/master/Test/Controller/APIController.php
+
 ##### @Route annotation
 - accepts regular expresssions
 - accepts placeholders: they will be passed as argument in the same order as they appear
@@ -266,6 +325,7 @@ class APIController extends Controller{
 	}
 }
 ```
+
 ### Registering controllers
 ```php
 use Plankton\Server\Server;
@@ -277,6 +337,7 @@ $server
 	->run();
 ```
 Full example here: https://github.com/foxdie/rest/blob/master/Test/public/simple-server.php
+
 ### Creating middlewares
 (this is optionnal)
 You must implement the Plankton\Server\Middleware interface.
@@ -293,6 +354,7 @@ class BasicAuthenticationMiddleware implements Middleware{
 }
 ```
 Full example here: https://github.com/foxdie/rest/blob/master/Test/Middleware/BasicAuthenticationMiddleware.php
+
 ### Registering the middlewares
 ```php
 use Plankton\Server\Server;
@@ -305,7 +367,9 @@ $server
 	->run();
 ```
 ## OAuth2
+
 ### Client Credentials Grant
+
 #### Client
 ```php
 use Plankton\Client\Client;
@@ -320,6 +384,7 @@ $client = new Client(API_ENDPOINT, new ClientCredentialsAuthentication(
 ```
 Full example here: 	
 https://github.com/foxdie/rest/blob/master/Test/public/oauth2-client.php
+
 #### Server
 ```php
 use Plankton\Server\Server;
@@ -339,6 +404,7 @@ $server
 ```
 Full example here:
 https://github.com/foxdie/rest/blob/master/Test/public/oauth2-server.php
+
 ##### Creating your own Access Token Provider
 All you have to do is to implement the AccessTokenProvider interface:
 ```php
@@ -365,8 +431,11 @@ class PDOProvider implements AccessTokenProvider{
 	}
 }
 ```
+
 ## Logging
+
 ### Client side
+
 #### Simple logger
 ```php
 use Plankton\Logging\SimpleLogger;
@@ -380,6 +449,7 @@ foreach ($client->getLogger()->getLogs() as $request) {
 }
 ```
 Full example here: https://github.com/foxdie/rest/blob/master/Test/public/simple-client.php
+
 #### XML logger
 ```php
 use Plankton\Logging\XMLLogger;
@@ -392,6 +462,7 @@ header("Content-type: text/xml");
 echo $client->getLogger()->getLogs()->asXML();
 ```
 Full example here: https://github.com/foxdie/rest/blob/master/Test/public/oauth2-client.php
+
 #### Custom logger
 You have to implement the Plankton\Request\Logger interface:
 ```php
@@ -403,6 +474,7 @@ class CustomLogger implements Logger{
 	}
 }
 ```
+
 ### Server side
 You can easily log requests and responses by [adding a middleware](#creating-middlewares):
 ```php

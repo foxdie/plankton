@@ -11,7 +11,7 @@ use Plankton\Server\RequestDispatcher;
 class BasicAuthenticationMiddleware implements Middleware{
 	/**
 	 * {@inheritDoc}
-	 * @see \Plankton\RequestHandler::process()
+	 * @see \Plankton\Server\RequestHandler::process()
 	 */
 	public function process(Request $request, RequestDispatcher $dispatcher): Response{
 		if (!$this->isAuthenticated($request)) {
