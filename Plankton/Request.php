@@ -263,23 +263,13 @@ class Request implements HTTPMessage{
 	
 	/**
 	 * @access public
-	 * @return string
+	 * @return string  
 	 */
 	public function __toString(): ?string{
 	    switch ($this->getHeader("Content-Type")) {
 	        case self::CONTENT_TYPE_JSON :
 	            if (is_array($this->data) || is_object($this->data)) {
 	                return json_encode($this->data);
-	            }
-	            
-	            return $this->data;
-	        case self::CONTENT_TYPE_X_WWW_FORM_URLENCODED:
-	            if (is_array($this->data)) {
-	                return http_build_query($this->data);
-	            }
-	            
-	            if (is_object($this->data)) {
-	                return http_build_query(json_decode(json_encode($this->data)));
 	            }
 	            
 	            return $this->data;

@@ -136,7 +136,9 @@ When you are using magic calls (e.g. `$client->postUsers([]);`) or one of the me
 | valid xml string | application/xml |
 | string | text/plain |
 
-However, you still can set the `Content-Type` with a [customized request](#custom-request-example)
+
+
+However, you still can set the `Content-Type` manually with a [customized request](#custom-request-example)
 
 ### Custom request example
 ```php
@@ -156,6 +158,16 @@ $client->send($request, function(Response $response){
     // ...
 });
 ```
+
+#### Automatic data conversion
+
+For readability reasons, you can use `arrays` or `objects` with the `Request::setData()` method, regardless of the content-type you use. The data will be automatically converted according to the rules below :
+
+| Content-Type | Data type | Conversion |
+| Request::CONTENT_TYPE_JSON | array | json string |
+| Request::CONTENT_TYPE_JSON | object | json string |
+| other | array | URL-encoded query string |
+| other | object | URL-encoded query string |
 
 ### Authentication strategy	
 
